@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CreditCard, HandCoins, Scissors, Phone, ShieldCheck, TrendingUp, Sparkles } from "lucide-react";
+import { CreditCard, HandCoins, Scissors, Phone, ShieldCheck, TrendingUp, Sparkles, Bot, MailCheck, AreaChart } from "lucide-react";
 import Link from 'next/link';
 import { Logo } from "@/components/icons/logo";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +16,27 @@ const features = [
   { icon: <HandCoins className="h-8 w-8" />, title: "Bill Negotiation", description: "Our AI agents negotiate your monthly bills like internet, cable, and phone." },
   { icon: <CreditCard className="h-8 w-8" />, title: "Credit Repair", description: "We find and dispute errors on your credit report to boost your score." },
   { icon: <Scissors className="h-8 w-8" />, title: "Subscription Cancellation", description: "Tired of unwanted subscriptions? We'll cancel them for you." },
+];
+
+const detailedFeatures = [
+    { 
+        icon: <Bot className="h-6 w-6 text-primary" />, 
+        title: "AI-Powered Scripts", 
+        description: "GPT-4 generates personalized negotiation scripts based on your payment history and competitor rates.", 
+        stat: "95% success on cable" 
+    },
+    { 
+        icon: <MailCheck className="h-6 w-6 text-primary" />, 
+        title: "Certified Mail Automation", 
+        description: "Dispute letters automatically printed and mailed via certified mail to all three credit bureaus.", 
+        stat: "48hr turnaround" 
+    },
+    { 
+        icon: <AreaChart className="h-6 w-6 text-primary" />, 
+        title: "Debt Validation", 
+        description: "Challenges collection agencies to prove they own your debt. No proof = deletion from your report.", 
+        stat: "30% of debts invalid" 
+    },
 ];
 
 const statsNew = [
@@ -57,8 +78,8 @@ export default function LandingPage() {
                 aria-hidden="true"
                 className="absolute inset-0 top-0 grid grid-cols-2 -space-x-52 opacity-40"
             >
-                <div className="h-60 bg-gradient-to-br from-primary to-green-400 blur-[150px] "></div>
-                <div className="h-72 bg-gradient-to-r from-cyan-400 to-primary blur-[150px] "></div>
+                <div className="h-60 bg-gradient-to-br from-primary to-green-400 blur-[200px] "></div>
+                <div className="h-72 bg-gradient-to-r from-cyan-400 to-primary blur-[200px] "></div>
             </div>
              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAiIHN0cm9rZT0iaHNsKDAsIDAlLCAxMDAlLCAwLjA1KSIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==')] opacity-50"></div>
           <div className="container mx-auto px-4 md:px-6 text-center relative">
@@ -128,19 +149,7 @@ export default function LandingPage() {
             </p>
           </div>
         </section>
-
-        <section className="container mx-auto px-4 md:px-6 py-20">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {statsOld.map((stat) => (
-                    <div key={stat.label} className="text-center">
-                        <p className="text-4xl lg:text-5xl font-bold text-primary">{stat.value}</p>
-                        <p className="mt-2 text-lg font-semibold">{stat.label}</p>
-                        <p className="text-sm text-muted-foreground">{stat.description}</p>
-                    </div>
-                ))}
-            </div>
-        </section>
-
+        
         <section className="py-20 md:py-32">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="grid md:grid-cols-3 gap-8 text-center">
@@ -154,6 +163,43 @@ export default function LandingPage() {
                     </div>
                   ))}
                 </div>
+            </div>
+        </section>
+
+        <section className="container mx-auto px-4 md:px-6 pb-20 md:pb-32">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {detailedFeatures.map((feature, index) => (
+                    <Card key={index} className="bg-card/50">
+                        <CardContent className="p-6 space-y-4">
+                            <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-secondary mb-4">
+                                {feature.icon}
+                            </div>
+                            <h3 className="text-lg font-bold font-headline">{feature.title}</h3>
+                            <p className="text-sm text-muted-foreground">{feature.description}</p>
+                            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">{feature.stat}</Badge>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+            <div className="mt-20 text-center">
+                <h2 className="text-4xl md:text-6xl font-bold font-headline tracking-tighter">
+                How <span className="text-primary">BillBully</span> Works
+                </h2>
+                <p className="mt-4 mx-auto max-w-2xl text-lg text-muted-foreground">
+                Four simple steps to financial freedom. No phone calls, no paperwork, no stress.
+                </p>
+            </div>
+        </section>
+
+        <section className="container mx-auto px-4 md:px-6 py-20">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {statsOld.map((stat) => (
+                    <div key={stat.label} className="text-center">
+                        <p className="text-4xl lg:text-5xl font-bold text-primary">{stat.value}</p>
+                        <p className="mt-2 text-lg font-semibold">{stat.label}</p>
+                        <p className="text-sm text-muted-foreground">{stat.description}</p>
+                    </div>
+                ))}
             </div>
         </section>
       </main>
