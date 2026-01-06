@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { CreditCard, HandCoins, Scissors, Phone, ShieldCheck, TrendingUp, Sparkles, Bot, MailCheck, AreaChart, Link as LinkIcon, Scan, Power, DollarSignIcon } from "lucide-react";
+import { CreditCard, HandCoins, Scissors, Phone, ShieldCheck, TrendingUp, Sparkles, Bot, MailCheck, AreaChart, Link as LinkIcon, Scan, Power, DollarSignIcon, Check, Lock } from "lucide-react";
 import Link from 'next/link';
 import { Logo } from "@/components/icons/logo";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 const howItWorksSteps = [
     {
@@ -65,6 +66,73 @@ const statsNew = [
     { icon: <Sparkles className="h-5 w-5 text-primary" />, text: "12,000+ Credit Items Removed" },
 ];
 
+const pricingTiers = [
+    {
+        name: "Free",
+        price: "$0",
+        period: "forever",
+        description: "Try BillBully risk-free",
+        features: [
+            "Connect 1 bank account",
+            "View bills & subscriptions",
+            "1 free bill negotiation",
+            "Credit score once/year",
+        ],
+        buttonText: "Get Started Free",
+        buttonVariant: "outline",
+        popular: false
+    },
+    {
+        name: "Bill Bully Pro",
+        price: "$19.99",
+        period: "/month",
+        description: "Maximize your savings",
+        features: [
+            "Negotiate all bills quarterly",
+            "Cancel unlimited subscriptions",
+            "Savings analytics dashboard",
+            "Priority support",
+            "Bill tracking alerts"
+        ],
+        buttonText: "Start Pro Trial",
+        buttonVariant: "default",
+        popular: false
+    },
+    {
+        name: "Credit Bully",
+        price: "$49.99",
+        period: "/month",
+        description: "Full credit repair suite",
+        features: [
+            "All Bill Bully Pro features",
+            "Dispute negative credit items",
+            "Automated debt validation",
+            "Goodwill letter campaigns",
+            "Monthly credit score updates",
+            "3-bureau monitoring (US)"
+        ],
+        buttonText: "Start Credit Repair",
+        buttonVariant: "default",
+        popular: true
+    },
+    {
+        name: "Ultimate Bundle",
+        price: "$59.99",
+        period: "/month",
+        description: "Best value for serious savers",
+        features: [
+            "Everything in Credit Bully",
+            "Save $10/month",
+            "Dedicated account manager",
+            "Annual financial review",
+            "VIP support queue"
+        ],
+        buttonText: "Get Ultimate",
+        buttonVariant: "default",
+        popular: false
+    }
+]
+
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -77,9 +145,9 @@ export default function LandingPage() {
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <Link href="#" className="hover:text-primary transition-colors">Features</Link>
-            <Link href="#" className="hover:text-primary transition-colors">Pricing</Link>
-            <Link href="#" className="hover:text-primary transition-colors">How It Works</Link>
+            <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
+            <Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link>
+            <Link href="#how-it-works" className="hover:text-primary transition-colors">How It Works</Link>
           </nav>
           <div className="flex items-center gap-4">
             <Button variant="ghost" asChild>
@@ -159,7 +227,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="py-20 md:py-32 bg-background/50">
+        <section id="features" className="py-20 md:py-32 bg-background/50">
           <div className="container mx-auto px-4 md:px-6 text-center">
             <h2 className="text-4xl md:text-6xl font-bold font-headline tracking-tighter">
               Your Financial <span className="text-primary">Attack Dog</span>
@@ -168,10 +236,8 @@ export default function LandingPage() {
               BillBully fights the battles you hate. Stop spending hours on hold. Let AI do the dirty work while you watch your savings grow.
             </p>
           </div>
-        </section>
         
-        <section className="py-20 md:py-32">
-            <div className="container mx-auto px-4 md:px-6">
+            <div className="container mx-auto px-4 md:px-6 mt-16">
                 <div className="grid md:grid-cols-3 gap-8 text-center">
                   {features.map((feature, index) => (
                     <div key={index} className="flex flex-col items-center">
@@ -186,7 +252,7 @@ export default function LandingPage() {
             </div>
         </section>
 
-        <section className="container mx-auto px-4 md:px-6 pb-20 md:pb-32">
+        <section className="container mx-auto px-4 md:px-6 py-20 md:py-32">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {detailedFeatures.map((feature, index) => (
                     <Card key={index} className="bg-card/50">
@@ -201,7 +267,10 @@ export default function LandingPage() {
                     </Card>
                 ))}
             </div>
-            <div className="mt-20 text-center">
+        </section>
+        
+        <section id="how-it-works" className="py-20 md:py-32">
+            <div className="container mx-auto px-4 md:px-6 text-center">
                 <h2 className="text-4xl md:text-6xl font-bold font-headline tracking-tighter">
                 How <span className="text-primary">BillBully</span> Works
                 </h2>
@@ -209,24 +278,66 @@ export default function LandingPage() {
                 Four simple steps to financial freedom. No phone calls, no paperwork, no stress.
                 </p>
             </div>
+            <div className="container mx-auto px-4 md:px-6 mt-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {howItWorksSteps.map((step) => (
+                        <Card key={step.number} className="bg-card/50 border border-border/50 p-6 relative">
+                            <Badge variant="default" className="absolute -top-4 -left-4 h-10 w-10 text-base justify-center">{step.number}</Badge>
+                            <div className="flex flex-col items-start gap-4">
+                               <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-secondary text-primary">
+                                   {step.icon}
+                               </div>
+                               <div className="space-y-2">
+                                    <h3 className="text-xl font-bold font-headline">{step.title}</h3>
+                                    <p className="text-muted-foreground">{step.description}</p>
+                               </div>
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+            </div>
         </section>
 
-        <section className="container mx-auto px-4 md:px-6 py-20">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {howItWorksSteps.map((step) => (
-                    <Card key={step.number} className="bg-card/50 border border-border/50 p-6 relative">
-                        <Badge variant="default" className="absolute -top-4 -left-4 h-10 w-10 text-base justify-center">{step.number}</Badge>
-                        <div className="flex flex-col items-start gap-4">
-                           <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-secondary text-primary">
-                               {step.icon}
-                           </div>
-                           <div className="space-y-2">
-                                <h3 className="text-xl font-bold font-headline">{step.title}</h3>
-                                <p className="text-muted-foreground">{step.description}</p>
-                           </div>
-                        </div>
-                    </Card>
-                ))}
+        <section id="pricing" className="py-20 md:py-32 bg-background/50">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {pricingTiers.map((tier) => (
+                        <Card key={tier.name} className={cn("flex flex-col", tier.popular && "border-primary ring-2 ring-primary shadow-lg")}>
+                            {tier.popular && (
+                                <Badge className="w-fit self-center -mt-3 bg-primary">Most Popular</Badge>
+                            )}
+                            <CardHeader className="pt-8">
+                                <CardTitle className="font-headline text-2xl">{tier.name}</CardTitle>
+                                <p>
+                                    <span className="text-5xl font-bold">{tier.price}</span>
+                                    <span className="text-muted-foreground">{tier.period}</span>
+                                </p>
+                                <CardDescription>{tier.description}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex flex-col flex-1 space-y-4">
+                               <ul className="space-y-3 flex-1">
+                                   {tier.features.map(feature => (
+                                       <li key={feature} className="flex items-start">
+                                           <Check className="h-5 w-5 text-primary mr-2 mt-1 shrink-0" />
+                                           <span className="text-muted-foreground">{feature}</span>
+                                       </li>
+                                   ))}
+                               </ul>
+                               <Button size="lg" className="w-full mt-6" variant={tier.buttonVariant as any}>
+                                   {tier.buttonText}
+                               </Button>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+                 <div className="mt-8 flex justify-center items-center gap-2 text-sm text-muted-foreground">
+                    <Lock className="h-4 w-4" />
+                    <span>256-bit encryption</span>
+                    <span className="text-border"> • </span>
+                    <span>FCRA compliant</span>
+                    <span className="text-border"> • </span>
+                    <span>Cancel anytime</span>
+                </div>
             </div>
         </section>
       </main>
