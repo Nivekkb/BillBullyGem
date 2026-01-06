@@ -1,0 +1,350 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the BillBully application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user.",
+          "format": "uuid"
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "name": {
+          "type": "string",
+          "description": "User's full name."
+        },
+        "country": {
+          "type": "string",
+          "description": "Country of residence (US or CA)."
+        },
+        "plaidAccessToken": {
+          "type": "string",
+          "description": "Plaid access token for connecting to bank accounts."
+        },
+        "creditReportConsent": {
+          "type": "boolean",
+          "description": "Indicates if the user has given consent to pull credit reports."
+        },
+        "subscriptionTier": {
+          "type": "string",
+          "description": "User's subscription tier (free, pro, credit_bully)."
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "name",
+        "country",
+        "creditReportConsent"
+      ]
+    },
+    "Bill": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Bill",
+      "type": "object",
+      "description": "Represents a bill for a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the bill."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Bill)"
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Name of the company the bill is from."
+        },
+        "category": {
+          "type": "string",
+          "description": "Category of the bill (cable, phone, insurance)."
+        },
+        "currentAmount": {
+          "type": "number",
+          "description": "Current amount of the bill."
+        },
+        "negotiatedAmount": {
+          "type": "number",
+          "description": "Negotiated amount of the bill."
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the bill (pending, negotiating, success, failed)."
+        },
+        "savingsAmount": {
+          "type": "number",
+          "description": "Amount saved on the bill through negotiation."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "companyName",
+        "category",
+        "currentAmount",
+        "status"
+      ]
+    },
+    "CreditItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CreditItem",
+      "type": "object",
+      "description": "Represents an item on a user's credit report.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the credit item."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N CreditItem)"
+        },
+        "bureau": {
+          "type": "string",
+          "description": "Credit bureau the item is from (equifax, transunion, experian)."
+        },
+        "accountName": {
+          "type": "string",
+          "description": "Name of the account the item is related to."
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Account number of the account the item is related to."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of credit item (late_payment, collection, charge_off)."
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the credit item (identified, disputed, deleted, verified)."
+        },
+        "disputeDate": {
+          "type": "string",
+          "description": "Date the item was disputed.",
+          "format": "date-time"
+        },
+        "responseDeadline": {
+          "type": "string",
+          "description": "Deadline for the credit bureau to respond.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "bureau",
+        "accountName",
+        "type",
+        "status"
+      ]
+    },
+    "DisputeLetter": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "DisputeLetter",
+      "type": "object",
+      "description": "Represents a dispute letter sent for a credit item.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the dispute letter."
+        },
+        "creditItemId": {
+          "type": "string",
+          "description": "Reference to CreditItem. (Relationship: CreditItem 1:N DisputeLetter)"
+        },
+        "letterType": {
+          "type": "string",
+          "description": "Type of letter (609, debt_validation, goodwill)."
+        },
+        "generatedText": {
+          "type": "string",
+          "description": "Text of the generated letter."
+        },
+        "mailedDate": {
+          "type": "string",
+          "description": "Date the letter was mailed.",
+          "format": "date-time"
+        },
+        "trackingNumber": {
+          "type": "string",
+          "description": "Tracking number for the mailed letter."
+        },
+        "responseReceived": {
+          "type": "boolean",
+          "description": "Indicates if a response has been received."
+        }
+      },
+      "required": [
+        "id",
+        "creditItemId",
+        "letterType",
+        "generatedText"
+      ]
+    },
+    "Subscription": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Subscription",
+      "type": "object",
+      "description": "Represents a user's subscription.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the subscription."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Subscription)"
+        },
+        "serviceName": {
+          "type": "string",
+          "description": "Name of the subscription service."
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of the subscription."
+        },
+        "billingFrequency": {
+          "type": "string",
+          "description": "How often the subscription is billed."
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the subscription (active, cancelled)."
+        },
+        "cancellationDate": {
+          "type": "string",
+          "description": "Date the subscription was cancelled.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "serviceName",
+        "amount",
+        "billingFrequency",
+        "status"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles.  The userId parameter corresponds to the Firebase Auth UID. The user is the owner of all documents under this path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/bills/{billId}",
+        "definition": {
+          "entityName": "Bill",
+          "schema": {
+            "$ref": "#/backend/entities/Bill"
+          },
+          "description": "Stores bills for a specific user. Path-based ownership ensures only the user can access their bills.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            },
+            {
+              "name": "billId",
+              "description": "The unique ID of the bill."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/credit_items/{creditItemId}",
+        "definition": {
+          "entityName": "CreditItem",
+          "schema": {
+            "$ref": "#/backend/entities/CreditItem"
+          },
+          "description": "Stores credit items for a specific user. Path-based ownership ensures only the user can access their credit items.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            },
+            {
+              "name": "creditItemId",
+              "description": "The unique ID of the credit item."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/credit_items/{creditItemId}/dispute_letters/{disputeLetterId}",
+        "definition": {
+          "entityName": "DisputeLetter",
+          "schema": {
+            "$ref": "#/backend/entities/DisputeLetter"
+          },
+          "description": "Stores dispute letters for a specific credit item.  Maintains hierarchical ownership under the credit item.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            },
+            {
+              "name": "creditItemId",
+              "description": "The unique ID of the credit item."
+            },
+            {
+              "name": "disputeLetterId",
+              "description": "The unique ID of the dispute letter."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/subscriptions/{subscriptionId}",
+        "definition": {
+          "entityName": "Subscription",
+          "schema": {
+            "$ref": "#/backend/entities/Subscription"
+          },
+          "description": "Stores subscriptions for a specific user. Path-based ownership ensures only the user can access their subscriptions.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            },
+            {
+              "name": "subscriptionId",
+              "description": "The unique ID of the subscription."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, support secure list operations (QAPs), and maintain data clarity. It uses path-based ownership for user-specific data and denormalization where necessary to avoid `get()` calls in security rules.\n\n**Authorization Independence:** User-owned data is stored under `/users/{userId}`, granting the user implicit ownership. The Bills, CreditItems, DisputesLetters, and Subscriptions entities are stored as subcollections of the user document, ensuring clear ownership and authorization independence. Access control relies on `request.auth.uid` matching the `userId` in the path, eliminating the need for `get()` calls to parent documents.\n\n**QAPs (Rules are not Filters):** The structure facilitates secure `list` operations by segregating data based on ownership. Listing bills, credit items, dispute letters, and subscriptions is restricted to the owning user via path-based rules. This avoids the need to filter based on user ID within the rules, improving security and performance.\n\n**Data Clarity and Predictability:**  Explicit state modeling is encouraged with the `status` field in the Bill and CreditItem entities. Semantic naming conventions are used throughout the structure."
+  }
+}
