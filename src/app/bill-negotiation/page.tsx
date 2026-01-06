@@ -1,107 +1,250 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+'use client';
 
-const bills = [
-    { company: "Comcast/Xfinity", category: "Internet", currentBill: "$89.99", status: "Success", savings: "$35.00/mo" },
-    { company: "AT&T Wireless", category: "Phone", currentBill: "$124.50", status: "Failed", savings: "$0.00" },
-    { company: "Geico", category: "Insurance", currentBill: "$150.00", status: "Negotiating", savings: "..." },
-    { company: "Verizon Fios", category: "Cable", currentBill: "$110.00", status: "Pending", savings: "..." },
-];
+import { useMemo } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  useUser,
+  useFirestore,
+  useCollection,
+  useMemoFirebase,
+  addDocumentNonBlocking,
+} from '@/firebase';
+import { collection, serverTimestamp } from 'firebase/firestore';
+
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Loader2 } from 'lucide-react';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { useToast } from '@/hooks/use-toast';
+
+const billSchema = z.object({
+  companyName: z.string().min(2, { message: 'Company name is required.' }),
+  category: z.string({ required_error: 'Please select a category.' }),
+  currentAmount: z.preprocess(
+    (a) => parseFloat(z.string().parse(a)),
+    z.number().positive({ message: 'Amount must be positive.' })
+  ),
+});
 
 export default function BillNegotiationPage() {
-    const getBadgeVariant = (status: string) => {
-        switch(status.toLowerCase()){
-            case 'success':
-                return 'default';
-            case 'pending':
-            case 'negotiating':
-                return 'secondary';
-            case 'failed':
-                return 'destructive';
-            default:
-                return 'outline';
-        }
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const { toast } = useToast();
+
+  const billsQuery = useMemoFirebase(
+    () =>
+      user && firestore
+        ? collection(firestore, 'users', user.uid, 'bills')
+        : null,
+    [user, firestore]
+  );
+
+  const { data: bills, isLoading } = useCollection(billsQuery);
+
+  const form = useForm<z.infer<typeof billSchema>>({
+    resolver: zodResolver(billSchema),
+    defaultValues: {
+      companyName: '',
+      currentAmount: 0,
+    },
+  });
+
+  const getBadgeVariant = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'success':
+        return 'default';
+      case 'pending':
+      case 'negotiating':
+        return 'secondary';
+      case 'failed':
+        return 'destructive';
+      default:
+        return 'outline';
     }
+  };
 
-    return (
-        <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight font-headline">Bill Negotiation</h1>
-                <p className="text-muted-foreground">Let our AI agents fight for a lower price on your monthly bills.</p>
+  async function onSubmit(values: z.infer<typeof billSchema>) {
+    if (!user || !firestore) return;
+
+    const newBill = {
+      userId: user.uid,
+      ...values,
+      status: 'Pending',
+      createdAt: serverTimestamp(),
+    };
+    
+    const billsCollection = collection(firestore, 'users', user.uid, 'bills');
+    
+    addDocumentNonBlocking(billsCollection, newBill);
+    
+    toast({
+        title: "Bill Submitted!",
+        description: `${values.companyName} bill has been submitted for negotiation.`,
+    });
+
+    form.reset();
+  }
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight font-headline">
+          Bill Negotiation
+        </h1>
+        <p className="text-muted-foreground">
+          Let our AI agents fight for a lower price on your monthly bills.
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-headline">Add a Bill for Negotiation</CardTitle>
+          <CardDescription>
+            Enter the details of a bill you'd like us to negotiate.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid md:grid-cols-3 gap-6">
+              <FormField
+                control={form.control}
+                name="companyName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Comcast" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                     <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="internet">Internet</SelectItem>
+                          <SelectItem value="cable">Cable TV</SelectItem>
+                          <SelectItem value="phone">Phone</SelectItem>
+                          <SelectItem value="insurance">Insurance</SelectItem>
+                          <SelectItem value="utilities">Utilities</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="currentAmount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Current Monthly Bill ($)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="e.g., 89.99" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="md:col-span-3">
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Submit for Negotiation
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-headline">Your Negotiations</CardTitle>
+          <CardDescription>
+            Track the progress of your active and past negotiations.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-40">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline">Add a Bill for Negotiation</CardTitle>
-                    <CardDescription>Enter the details of a bill you'd like us to negotiate.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form className="grid md:grid-cols-3 gap-6">
-                        <div className="space-y-2">
-                            <Label htmlFor="company-name">Company Name</Label>
-                            <Input id="company-name" placeholder="e.g., Comcast" />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="bill-category">Category</Label>
-                            <Select>
-                                <SelectTrigger id="bill-category">
-                                    <SelectValue placeholder="Select a category" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="internet">Internet</SelectItem>
-                                    <SelectItem value="cable">Cable TV</SelectItem>
-                                    <SelectItem value="phone">Phone</SelectItem>
-                                    <SelectItem value="insurance">Insurance</SelectItem>
-                                    <SelectItem value="utilities">Utilities</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="current-bill">Current Monthly Bill ($)</Label>
-                            <Input id="current-bill" type="number" placeholder="e.g., 89.99" />
-                        </div>
-                        <div className="md:col-span-3">
-                             <Button>Submit for Negotiation</Button>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle className="font-headline">Your Negotiations</CardTitle>
-                    <CardDescription>Track the progress of your active and past negotiations.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Company</TableHead>
-                                <TableHead>Category</TableHead>
-                                <TableHead>Current Bill</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Savings</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {bills.map((bill, index) => (
-                                <TableRow key={index}>
-                                    <TableCell className="font-medium">{bill.company}</TableCell>
-                                    <TableCell>{bill.category}</TableCell>
-                                    <TableCell>{bill.currentBill}</TableCell>
-                                    <TableCell><Badge variant={getBadgeVariant(bill.status)}>{bill.status}</Badge></TableCell>
-                                    <TableCell className="text-right font-medium">{bill.savings}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
-        </div>
-    );
-}
+          ) : bills && bills.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Company</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Current Bill</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Savings</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {bills.map((bill) => (
+                  <TableRow key={bill.id}>
+                    <TableCell className="font-medium">{bill.companyName}</TableCell>
+                    <TableCell>{bill.category}</TableCell>
+                    <TableCell>${bill.currentAmount.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <Badge variant={getBadgeVariant(bill.status)}>{bill.status}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right font-medium">
+                      {bill.savingsAmount ? `$${bill.savingsAmount.toFixed(2)}/mo` : '...'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+             <div className="text-center py-10">
+                <p className="text-muted-foreground">You haven't submitted any bills for negotiation yet.</p>
+                <p className="text-sm text-muted-foreground">Add a bill above to get started!</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
