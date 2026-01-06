@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CreditCard, HandCoins, Scissors, Phone, ShieldCheck, TrendingUp, Sparkles, Bot, MailCheck, AreaChart, Link as LinkIcon, Scan, Power, DollarSignIcon, Check, Lock } from "lucide-react";
+import { CreditCard, HandCoins, Scissors, Phone, ShieldCheck, TrendingUp, Sparkles, Bot, MailCheck, AreaChart, Link as LinkIcon, Scan, Power, DollarSignIcon, Check, Lock, Star } from "lucide-react";
 import Link from 'next/link';
 import { Logo } from "@/components/icons/logo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -340,15 +340,94 @@ export default function LandingPage() {
                 </div>
             </div>
         </section>
+        <section className="py-20 md:py-32">
+            <div className="container mx-auto px-4 md:px-6 text-center">
+                <h2 className="text-4xl md:text-6xl font-bold font-headline tracking-tighter">
+                    Ready to Stop Getting <span className="text-primary">Ripped Off?</span>
+                </h2>
+                <p className="mt-4 mx-auto max-w-xl text-lg text-muted-foreground">
+                    Join 25,000+ users who've saved an average of $2,840/year. Start free—no credit card required.
+                </p>
+                <div className="mt-8 flex justify-center gap-4">
+                    <Button size="lg" asChild>
+                        <Link href="/dashboard">Start Saving Now &rarr;</Link>
+                    </Button>
+                    <Button size="lg" variant="outline">
+                        Schedule a Demo
+                    </Button>
+                </div>
+                <div className="mt-12 text-center">
+                    <p className="text-sm text-muted-foreground mb-2">Trusted by users across the US & Canada</p>
+                    <div className="flex items-center justify-center gap-2">
+                        <div className="flex items-center text-primary">
+                            <Star className="w-5 h-5 fill-current" />
+                            <Star className="w-5 h-5 fill-current" />
+                            <Star className="w-5 h-5 fill-current" />
+                            <Star className="w-5 h-5 fill-current" />
+                            <Star className="w-5 h-5 fill-current" />
+                        </div>
+                        <p className="font-semibold">4.9/5 <span className="font-normal text-muted-foreground">(2,847 reviews)</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
       </main>
 
-      <footer className="border-t">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 py-8 px-4 md:px-6 text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} BillBully. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
-          </div>
+      <footer className="border-t bg-card">
+        <div className="container mx-auto px-4 md:px-6 py-16">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+                <div className="col-span-2 md:col-span-1">
+                    <Link href="/" className="flex items-center gap-2 mb-4">
+                        <Logo className="w-8 h-8 text-primary" />
+                        <span className="text-xl font-bold tracking-tight font-headline">
+                        BillBully
+                        </span>
+                    </Link>
+                    <p className="text-sm text-muted-foreground">AI-powered financial advocacy for Americans and Canadians who refuse to overpay.</p>
+                </div>
+                <div>
+                    <h4 className="font-semibold mb-4 text-foreground">Product</h4>
+                    <ul className="space-y-3">
+                        <li><Link href="#features" className="text-muted-foreground hover:text-primary">Features</Link></li>
+                        <li><Link href="#pricing" className="text-muted-foreground hover:text-primary">Pricing</Link></li>
+                        <li><Link href="#how-it-works" className="text-muted-foreground hover:text-primary">How It Works</Link></li>
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">API</Link></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 className="font-semibold mb-4 text-foreground">Company</h4>
+                    <ul className="space-y-3">
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">About</Link></li>
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">Blog</Link></li>
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">Careers</Link></li>
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">Press</Link></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 className="font-semibold mb-4 text-foreground">Legal</h4>
+                    <ul className="space-y-3">
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">Privacy Policy</Link></li>
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">Terms of Service</Link></li>
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">FCRA Disclosures</Link></li>
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">Security</Link></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 className="font-semibold mb-4 text-foreground">Support</h4>
+                    <ul className="space-y-3">
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">Help Center</Link></li>
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">Contact</Link></li>
+                        <li><Link href="#" className="text-muted-foreground hover:text-primary">Status</Link></li>
+                    </ul>
+                </div>
+            </div>
+            <div className="mt-12 border-t pt-8 flex flex-col md:flex-row items-center justify-between text-sm text-muted-foreground">
+                <p>&copy; {new Date().getFullYear()} BillBully. All rights reserved.</p>
+                <div className="flex items-center gap-4 mt-4 md:mt-0">
+                    <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
+                    <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
+                </div>
+            </div>
         </div>
       </footer>
     </div>
