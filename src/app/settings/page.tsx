@@ -110,16 +110,8 @@ export default function SettingsPage() {
       // If user data exists, update the document
       updateDocumentNonBlocking(userDocRef, dataToUpdate);
     } else {
-      // This case is unlikely if sign-up flow is correct, but as a fallback:
-      // You might want to create the doc instead.
-      // For now, we'll assume the doc exists for an update.
-      // Consider using set with merge if creation on update is desired.
-      toast({
-        title: 'Error',
-        description: 'User profile does not exist. Cannot update.',
-        variant: 'destructive',
-      });
-      return;
+      // This case should be handled by the FirebaseProvider now, but as a safe fallback...
+      setDocumentNonBlocking(userDocRef, dataToUpdate, { merge: true });
     }
 
     toast({
