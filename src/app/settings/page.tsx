@@ -9,6 +9,7 @@ import {
   updateDocumentNonBlocking,
   useDoc,
   useMemoFirebase,
+  setDocumentNonBlocking,
 } from '@/firebase';
 import { doc, serverTimestamp } from 'firebase/firestore';
 
@@ -96,13 +97,30 @@ export default function SettingsPage() {
 
 
   async function onProfileSubmit(values: z.infer<typeof profileSchema>) {
-    if (!userDocRef) return;
-    
-    updateDocumentNonBlocking(userDocRef, {
+    if (!userDocRef || !user) return;
+
+    const dataToUpdate = {
         name: values.name,
-        email: values.email,
+        email: values.email, // email is read-only, but good to have
+        id: user.uid, // Ensure the ID is present to satisfy security rules
         updatedAt: serverTimestamp(),
-    });
+    };
+
+    if (userData) {
+      // If user data exists, update the document
+      updateDocumentNonBlocking(userDocRef, dataToUpdate);
+    } else {
+      // This case is unlikely if sign-up flow is correct, but as a fallback:
+      // You might want to create the doc instead.
+      // For now, we'll assume the doc exists for an update.
+      // Consider using set with merge if creation on update is desired.
+      toast({
+        title: 'Error',
+        description: 'User profile does not exist. Cannot update.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     toast({
         title: 'Profile Updated',
