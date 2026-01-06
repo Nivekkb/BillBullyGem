@@ -133,6 +133,13 @@ const pricingTiers = [
     }
 ]
 
+const proofStats = [
+    { value: "$4.2M+", label: "Saved for Users", sublabel: "and counting" },
+    { value: "12,847", label: "Credit Items Removed", sublabel: "in the last 12 months" },
+    { value: "94%", label: "Negotiation Success", sublabel: "on cable & internet" },
+    { value: "47 pts", label: "Avg. Score Increase", sublabel: "within 6 months" },
+];
+
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -188,44 +195,58 @@ export default function LandingPage() {
                 </Button>
                 <Button size="lg" variant="outline">See How It Works</Button>
             </div>
-
-            <div className="mt-12 flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-sm">
-                {statsNew.map((stat, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                        {stat.icon}
-                        <span className="text-muted-foreground">{stat.text}</span>
-                    </div>
-                ))}
-            </div>
-
-             <Card className="relative mt-20 max-w-sm mx-auto bg-card/60 backdrop-blur-sm animate-fade-in-up">
-                <CardContent className="p-4 space-y-4">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <p className="text-sm text-muted-foreground">Total Monthly Savings</p>
-                            <p className="text-4xl font-bold text-primary">$237.48</p>
-                        </div>
-                        <Badge variant="default" className="bg-green-500/10 text-green-400 border-green-500/20">+18% this month</Badge>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                        <div>
-                            <p className="text-xs text-muted-foreground">Bills Negotiated</p>
-                            <p className="text-xl font-bold">7</p>
-                        </div>
-                        <div>
-                            <p className="text-xs text-muted-foreground">Credit Score</p>
-                            <p className="text-xl font-bold">+47 pts</p>
-                        </div>
-                         <div>
-                            <p className="text-xs text-muted-foreground">Subscriptions Cut</p>
-                            <p className="text-xl font-bold">4</p>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-
           </div>
         </section>
+
+        <section className="py-20 md:py-32">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-4 text-sm mb-16">
+                    {statsNew.map((stat, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                            {stat.icon}
+                            <span className="text-muted-foreground">{stat.text}</span>
+                        </div>
+                    ))}
+                </div>
+
+                <Card className="relative max-w-2xl mx-auto bg-card/60 backdrop-blur-sm animate-fade-in-up">
+                    <CardContent className="p-6 space-y-4">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <p className="text-sm text-muted-foreground">Total Monthly Savings</p>
+                                <p className="text-4xl font-bold text-primary">$237.48</p>
+                            </div>
+                            <Badge variant="default" className="bg-green-500/10 text-green-400 border-green-500/20">+18% this month</Badge>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4 text-left">
+                            <div>
+                                <p className="text-xs text-muted-foreground">Bills Negotiated</p>
+                                <p className="text-2xl font-bold">7</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-muted-foreground">Credit Score</p>
+                                <p className="text-2xl font-bold">+47 pts</p>
+                            </div>
+                             <div>
+                                <p className="text-xs text-muted-foreground">Subscriptions Cut</p>
+                                <p className="text-2xl font-bold">4</p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    {proofStats.map((stat) => (
+                        <div key={stat.label}>
+                            <p className="text-4xl md:text-5xl font-bold text-primary tracking-tighter">{stat.value}</p>
+                            <p className="mt-2 font-semibold text-foreground">{stat.label}</p>
+                            <p className="text-sm text-muted-foreground">{stat.sublabel}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+
 
         <section id="features" className="py-20 md:py-32 bg-background/50">
           <div className="container mx-auto px-4 md:px-6 text-center">
@@ -299,7 +320,15 @@ export default function LandingPage() {
         </section>
 
         <section id="pricing" className="py-20 md:py-32 bg-background/50">
-            <div className="container mx-auto px-4 md:px-6">
+            <div className="container mx-auto px-4 md:px-6 text-center">
+                 <h2 className="text-4xl md:text-6xl font-bold font-headline tracking-tighter">
+                    Flexible Pricing for <span className="text-primary">Every Goal</span>
+                </h2>
+                <p className="mt-4 mx-auto max-w-2xl text-lg text-muted-foreground">
+                    Start free and upgrade anytime. No hidden fees, no long-term contracts. Just savings.
+                </p>
+            </div>
+            <div className="container mx-auto px-4 md:px-6 mt-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {pricingTiers.map((tier) => (
                         <Card key={tier.name} className={cn("flex flex-col", tier.popular && "border-primary ring-2 ring-primary shadow-lg")}>
