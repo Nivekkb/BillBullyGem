@@ -1,3 +1,4 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "../components/dashboard/stat-card";
 import { SavingsChart } from "../components/dashboard/savings-chart";
 import { ScoreChart } from "../components/dashboard/score-chart";
