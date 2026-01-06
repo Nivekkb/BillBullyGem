@@ -29,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -43,6 +43,7 @@ import { pricingTiers } from '@/lib/pricing';
 import { useEffect } from 'react';
 import type { User as AppUser } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
+import { useRouter } from 'next/navigation';
 
 const profileSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -58,6 +59,7 @@ export default function SettingsPage() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const router = useRouter();
 
   const userDocRef = useMemoFirebase(
     () => (user && firestore ? doc(firestore, 'users', user.uid) : null),
@@ -147,6 +149,10 @@ export default function SettingsPage() {
           Manage your account settings, profile, and subscription plan.
         </p>
       </div>
+      <Button variant="link" onClick={() => router.back()} className="text-primary pl-0">
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back
+      </Button>
 
         {isUserDataLoading ? (
              <div className="flex justify-center items-center h-40">

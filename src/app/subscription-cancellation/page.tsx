@@ -32,7 +32,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -53,6 +53,7 @@ import { useToast } from '@/hooks/use-toast';
 import { generateCancellationRequest } from '@/ai/flows/ai-subscription-cancellation';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from '@/components/ui/alert-dialog';
 import type { Subscription } from '@/lib/types';
+import { useRouter } from 'next/navigation';
 
 
 const subscriptionSchema = z.object({
@@ -71,6 +72,7 @@ export default function SubscriptionCancellationPage() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [generatedRequest, setGeneratedRequest] = useState<string | null>(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -179,6 +181,10 @@ export default function SubscriptionCancellationPage() {
           Tired of paying for services you don't use? We'll help you cancel them.
         </p>
       </div>
+      <Button variant="link" onClick={() => router.back()} className="text-primary pl-0">
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back
+      </Button>
 
       <Card>
         <CardHeader>

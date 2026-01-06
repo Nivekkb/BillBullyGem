@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   featureDescription: z.string().min(20, { message: "Feature description must be at least 20 characters." }),
@@ -24,6 +25,7 @@ export default function CompliancePage() {
   const [analysis, setAnalysis] = useState<AnalyzeComplianceOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,6 +63,10 @@ export default function CompliancePage() {
         <h1 className="text-3xl font-bold tracking-tight font-headline">AI Compliance Tool</h1>
         <p className="text-muted-foreground">Analyze credit repair features for compliance with Canadian consumer protection laws.</p>
       </div>
+      <Button variant="link" onClick={() => router.back()} className="text-primary pl-0">
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back
+      </Button>
 
       <Card>
         <CardHeader>

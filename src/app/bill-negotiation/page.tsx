@@ -38,7 +38,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -48,6 +48,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 const billSchema = z.object({
   companyName: z.string().min(2, { message: 'Company name is required.' }),
@@ -62,6 +63,7 @@ export default function BillNegotiationPage() {
   const { user } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
+  const router = useRouter();
 
   const billsQuery = useMemoFirebase(
     () =>
@@ -127,6 +129,10 @@ export default function BillNegotiationPage() {
           Let our AI agents fight for a lower price on your monthly bills.
         </p>
       </div>
+      <Button variant="link" onClick={() => router.back()} className="text-primary pl-0">
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back
+      </Button>
 
       <Card>
         <CardHeader>
@@ -248,3 +254,4 @@ export default function BillNegotiationPage() {
       </Card>
     </div>
   );
+}

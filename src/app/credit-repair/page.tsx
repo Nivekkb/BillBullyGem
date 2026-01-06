@@ -9,12 +9,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
-import { Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import type { CreditItem } from '@/lib/types';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 export default function CreditRepairPage() {
     const { user } = useUser();
     const firestore = useFirestore();
+    const router = useRouter();
 
     const creditItemsQuery = useMemoFirebase(
         () =>
@@ -46,6 +49,10 @@ export default function CreditRepairPage() {
                 <h1 className="text-3xl font-bold tracking-tight font-headline">Credit Repair</h1>
                 <p className="text-muted-foreground">Manage disputes, track your score, and take control of your credit.</p>
             </div>
+            <Button variant="link" onClick={() => router.back()} className="text-primary pl-0">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+            </Button>
 
             <Tabs defaultValue="disputes">
                 <TabsList className="grid w-full grid-cols-3">
