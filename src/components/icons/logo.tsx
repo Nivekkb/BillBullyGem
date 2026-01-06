@@ -1,0 +1,17 @@
+import type { SVGProps } from 'react';
+
+export function Logo(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm-1 5h2v2h-2V7zm0 4h2v6h-2v-6z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
