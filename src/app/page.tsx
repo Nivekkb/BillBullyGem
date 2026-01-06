@@ -1,15 +1,35 @@
 import { Button } from "@/components/ui/button";
-import { CreditCard, HandCoins, Scissors, Phone, ShieldCheck, TrendingUp, Sparkles, Bot, MailCheck, AreaChart } from "lucide-react";
+import { CreditCard, HandCoins, Scissors, Phone, ShieldCheck, TrendingUp, Sparkles, Bot, MailCheck, AreaChart, Link as LinkIcon, Scan, Power, DollarSignIcon } from "lucide-react";
 import Link from 'next/link';
 import { Logo } from "@/components/icons/logo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const statsOld = [
-  { value: "$4.2M+", label: "Saved for Users", description: "and counting" },
-  { value: "12,847", label: "Credit Items Removed", description: "in the last 12 months" },
-  { value: "94%", label: "Negotiation Success", description: "on cable & internet" },
-  { value: "47 pts", label: "Avg. Score Increase", description: "within 6 months" },
+const howItWorksSteps = [
+    {
+        number: "01",
+        icon: <LinkIcon className="h-8 w-8" />,
+        title: "Connect Your Accounts",
+        description: "Securely link your bank accounts using Plaid. We scan for recurring charges and credit report access."
+    },
+    {
+        number: "02",
+        icon: <Scan className="h-8 w-8" />,
+        title: "AI Analyzes Everything",
+        description: "Our AI identifies overpriced bills, disputable credit items, and forgotten subscriptions in seconds."
+    },
+    {
+        number: "03",
+        icon: <Power className="h-8 w-8" />,
+        title: "We Fight For You",
+        description: "AI negotiates your bills, sends certified dispute letters, and cancels unwanted subscriptions automatically."
+    },
+    {
+        number: "04",
+        icon: <DollarSignIcon className="h-8 w-8" />,
+        title: "You Save Money",
+        description: "Track your savings in real-time. Average user saves $2,840/year without lifting a finger."
+    }
 ];
 
 const features = [
@@ -192,13 +212,20 @@ export default function LandingPage() {
         </section>
 
         <section className="container mx-auto px-4 md:px-6 py-20">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {statsOld.map((stat) => (
-                    <div key={stat.label} className="text-center">
-                        <p className="text-4xl lg:text-5xl font-bold text-primary">{stat.value}</p>
-                        <p className="mt-2 text-lg font-semibold">{stat.label}</p>
-                        <p className="text-sm text-muted-foreground">{stat.description}</p>
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {howItWorksSteps.map((step) => (
+                    <Card key={step.number} className="bg-card/50 border border-border/50 p-6 relative">
+                        <Badge variant="default" className="absolute -top-4 -left-4 h-10 w-10 text-base justify-center">{step.number}</Badge>
+                        <div className="flex flex-col items-start gap-4">
+                           <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-secondary text-primary">
+                               {step.icon}
+                           </div>
+                           <div className="space-y-2">
+                                <h3 className="text-xl font-bold font-headline">{step.title}</h3>
+                                <p className="text-muted-foreground">{step.description}</p>
+                           </div>
+                        </div>
+                    </Card>
                 ))}
             </div>
         </section>
