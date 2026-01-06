@@ -1,18 +1,45 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DisputeForm } from "../components/credit-repair/dispute-form";
-import { AnalyzeResponseForm } from "../components/credit-repair/analyze-response-form";
-import { ScoreTracker } from "../components/credit-repair/score-tracker";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+'use client';
 
-const disputeHistory = [
-    { bureau: "Equifax", item: "Late Payment (Citi)", date: "2024-06-15", status: "Deleted", outcome: "+25 pts" },
-    { bureau: "TransUnion", item: "Collection (Midland)", date: "2024-06-05", status: "Disputed", outcome: "Pending" },
-    { bureau: "Equifax", item: "Incorrect Balance (Chase)", date: "2024-05-20", status: "Updated", outcome: "Corrected" },
-];
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { DisputeForm } from '../components/credit-repair/dispute-form';
+import { AnalyzeResponseForm } from '../components/credit-repair/analyze-response-form';
+import { ScoreTracker } from '../components/credit-repair/score-tracker';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import { Loader2 } from 'lucide-react';
+import type { CreditItem } from '@/lib/types';
 
 export default function CreditRepairPage() {
+    const { user } = useUser();
+    const firestore = useFirestore();
+
+    const creditItemsQuery = useMemoFirebase(
+        () =>
+        user && firestore
+            ? collection(firestore, 'users', user.uid, 'credit_items')
+            : null,
+        [user, firestore]
+    );
+
+    const { data: creditItems, isLoading } = useCollection<CreditItem>(creditItemsQuery);
+    
+    const getBadgeVariant = (status: string) => {
+        switch (status.toLowerCase()) {
+            case 'deleted':
+            case 'updated':
+            case 'verified':
+                return 'default';
+            case 'disputed':
+            case 'identified':
+                return 'secondary';
+            default:
+                return 'outline';
+        }
+    };
+
     return (
         <div className="space-y-8">
             <div>
@@ -32,7 +59,7 @@ export default function CreditRepairPage() {
                         <CardHeader>
                             <CardTitle className="font-headline">Start a New Dispute</CardTitle>
                             <CardDescription>
-                                Found an error on your credit report? Let's generate a dispute letter.
+                                Found an error on your credit report? Let's generate a dispute letter and save it.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -47,28 +74,39 @@ export default function CreditRepairPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Bureau</TableHead>
-                                        <TableHead>Item</TableHead>
-                                        <TableHead>Date Sent</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead className="text-right">Outcome</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {disputeHistory.map((item, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell>{item.bureau}</TableCell>
-                                            <TableCell className="font-medium">{item.item}</TableCell>
-                                            <TableCell>{item.date}</TableCell>
-                                            <TableCell><Badge variant={item.status === 'Deleted' || item.status === 'Updated' ? 'default' : 'secondary'}>{item.status}</Badge></TableCell>
-                                            <TableCell className="text-right">{item.outcome}</TableCell>
+                            {isLoading ? (
+                                <div className="flex justify-center items-center h-40">
+                                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                                </div>
+                            ) : creditItems && creditItems.length > 0 ? (
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Bureau</TableHead>
+                                            <TableHead>Account Name</TableHead>
+                                            <TableHead>Type</TableHead>
+                                            <TableHead>Status</TableHead>
+                                            <TableHead className="text-right">Disputed On</TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {creditItems.map((item) => (
+                                            <TableRow key={item.id}>
+                                                <TableCell>{item.bureau}</TableCell>
+                                                <TableCell className="font-medium">{item.accountName}</TableCell>
+                                                <TableCell>{item.type.replace(/_/g, ' ')}</TableCell>
+                                                <TableCell><Badge variant={getBadgeVariant(item.status)}>{item.status}</Badge></TableCell>
+                                                <TableCell className="text-right">{item.disputeDate ? new Date(item.disputeDate).toLocaleDateString() : 'N/A'}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            ) : (
+                                <div className="text-center py-10">
+                                    <p className="text-muted-foreground">You haven't started any credit disputes yet.</p>
+                                    <p className="text-sm text-muted-foreground">Add a dispute above to get started!</p>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>

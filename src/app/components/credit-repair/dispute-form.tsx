@@ -12,12 +12,15 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
+import { collection, serverTimestamp, doc } from "firebase/firestore";
 
 const formSchema = z.object({
-  creditBureau: z.enum(['equifax', 'transunion'], { required_error: "Please select a credit bureau." }),
+  creditBureau: z.enum(['equifax', 'transunion', 'experian'], { required_error: "Please select a credit bureau." }),
   accountName: z.string().min(2, { message: "Account name must be at least 2 characters." }),
   accountNumber: z.string().min(2, { message: "Account number must be at least 2 characters." }),
   disputeReason: z.string().min(10, { message: "Please provide a reason for the dispute." }),
+  type: z.string({ required_error: "Please select a type."}),
   userExplanation: z.string().optional(),
 });
 
@@ -25,6 +28,8 @@ export function DisputeForm() {
   const [letterText, setLetterText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,27 +42,70 @@ export function DisputeForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!user || !firestore) {
+        toast({ title: "You must be logged in to create a dispute.", variant: "destructive"});
+        return;
+    }
+
     setIsLoading(true);
     setLetterText("");
     try {
-      const result = await generateCreditDisputeLetter({
-          userId: "user-123", // Replace with actual user ID
-          ...values,
-      });
-      setLetterText(result.letterText);
-      toast({
-        title: "Dispute Letter Generated",
-        description: "Your personalized dispute letter is ready below.",
-      });
+        // 1. Save the CreditItem to Firestore
+        const creditItemsCollection = collection(firestore, 'users', user.uid, 'credit_items');
+        const newCreditItemData = {
+            userId: user.uid,
+            bureau: values.creditBureau,
+            accountName: values.accountName,
+            accountNumber: values.accountNumber,
+            type: values.type,
+            status: 'Disputed',
+            disputeDate: new Date().toISOString(),
+            createdAt: serverTimestamp(),
+        };
+
+        const creditItemRef = await addDocumentNonBlocking(creditItemsCollection, newCreditItemData);
+
+        // 2. Generate the dispute letter using the AI flow
+        const letterResult = await generateCreditDisputeLetter({
+            userId: user.uid,
+            creditBureau: values.creditBureau,
+            accountName: values.accountName,
+            accountNumber: values.accountNumber,
+            disputeReason: values.disputeReason,
+            userExplanation: values.userExplanation,
+        });
+
+        if (letterResult.letterText && creditItemRef) {
+            setLetterText(letterResult.letterText);
+            
+            // 3. Save the generated letter to the subcollection
+            const disputeLettersCollection = collection(creditItemRef, 'dispute_letters');
+            await addDocumentNonBlocking(disputeLettersCollection, {
+                creditItemId: creditItemRef.id,
+                letterType: '609', // Example, this could be dynamic
+                generatedText: letterResult.letterText,
+                mailedDate: new Date().toISOString(),
+                createdAt: serverTimestamp()
+            });
+
+            toast({
+                title: "Dispute Item Saved & Letter Generated",
+                description: "Your dispute has been logged and the letter is ready below.",
+            });
+        } else {
+             throw new Error("Failed to generate or save dispute letter.");
+        }
+        
     } catch (error) {
-        console.error("Error generating letter:", error);
+        console.error("Error processing dispute:", error);
         toast({
             title: "Error",
-            description: "Failed to generate the dispute letter. Please try again.",
+            description: "Failed to process your dispute. Please try again.",
             variant: "destructive",
         });
     } finally {
         setIsLoading(false);
+        form.reset();
     }
   }
 
@@ -78,6 +126,29 @@ export function DisputeForm() {
                   <SelectContent>
                     <SelectItem value="equifax">Equifax Canada</SelectItem>
                     <SelectItem value="transunion">TransUnion Canada</SelectItem>
+                    <SelectItem value="experian">Experian (US)</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+           <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Item Type</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger><SelectValue placeholder="Select item type" /></SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="late_payment">Late Payment</SelectItem>
+                    <SelectItem value="collection">Collection</SelectItem>
+                    <SelectItem value="charge_off">Charge Off</SelectItem>
+                    <SelectItem value="inquiry">Hard Inquiry</SelectItem>
+                    <SelectItem value="personal_info">Incorrect Personal Info</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -106,7 +177,8 @@ export function DisputeForm() {
               </FormItem>
             )}
           />
-           <FormField
+        </div>
+         <FormField
             control={form.control}
             name="disputeReason"
             render={({ field }) => (
@@ -117,7 +189,6 @@ export function DisputeForm() {
               </FormItem>
             )}
           />
-        </div>
         <FormField
             control={form.control}
             name="userExplanation"
@@ -131,7 +202,7 @@ export function DisputeForm() {
           />
         <Button type="submit" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Generate Dispute Letter
+          Generate & Save Dispute
         </Button>
       </form>
       {letterText && (
