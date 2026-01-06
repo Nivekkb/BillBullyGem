@@ -92,10 +92,10 @@ export default function LandingPage() {
           </nav>
           <div className="flex items-center gap-4">
             <Button variant="ghost" asChild>
-              <Link href="/dashboard">Sign In</Link>
+              <Link href="/login">Sign In</Link>
             </Button>
             <Button asChild>
-              <Link href="/dashboard">Get Started Free</Link>
+              <Link href="/login">Get Started Free</Link>
             </Button>
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-8 flex justify-center gap-4">
                 <Button size="lg" asChild>
-                    <Link href="/dashboard">Start Saving Free</Link>
+                    <Link href="/login">Start Saving Free</Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
                     <Link href="#how-it-works">See How It Works</Link>
@@ -317,7 +317,7 @@ export default function LandingPage() {
                 </p>
                 <div className="mt-8 flex justify-center gap-4">
                     <Button size="lg" asChild>
-                        <Link href="/dashboard">Start Saving Now &rarr;</Link>
+                        <Link href="/login">Start Saving Now &rarr;</Link>
                     </Button>
                     <Button size="lg" variant="outline">
                         Schedule a Demo

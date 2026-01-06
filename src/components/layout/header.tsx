@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderImages } from '@/lib/placeholder-images';
+import { useAuth, useUser } from '@/firebase';
+import { signOut } from 'firebase/auth';
 
 const pathToTitle: { [key: string]: string } = {
     '/dashboard': 'Dashboard',
@@ -27,6 +29,12 @@ const pathToTitle: { [key: string]: string } = {
 export function AppHeader() {
   const pathname = usePathname();
   const userAvatar = placeholderImages.find(p => p.id === 'user-avatar-1');
+  const { user } = useUser();
+  const auth = useAuth();
+
+  const handleLogout = () => {
+    signOut(auth);
+  };
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-8">
@@ -43,8 +51,8 @@ export function AppHeader() {
             <DropdownMenuTrigger asChild>
                 <Button variant="secondary" size="icon" className="rounded-full">
                     <Avatar className="h-8 w-8">
-                       {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User Avatar" data-ai-hint={userAvatar.imageHint} />}
-                        <AvatarFallback>BB</AvatarFallback>
+                       <AvatarImage src={user?.photoURL ?? userAvatar?.imageUrl} alt="User Avatar" data-ai-hint={userAvatar?.imageHint} />
+                       <AvatarFallback>{user?.email?.[0].toUpperCase() ?? 'B'}</AvatarFallback>
                     </Avatar>
                     <span className="sr-only">Toggle user menu</span>
                 </Button>
@@ -56,7 +64,7 @@ export function AppHeader() {
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
       </div>
