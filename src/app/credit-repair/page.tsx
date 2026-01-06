@@ -126,7 +126,13 @@ export default function CreditRepairPage() {
                 </TabsContent>
                 
                 <TabsContent value="tracker" className="mt-6">
-                    <ScoreTracker />
+                   {isLoading ? (
+                        <div className="flex justify-center items-center h-40">
+                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                        </div>
+                   ) : (
+                        <ScoreTracker creditItems={creditItems} />
+                   )}
                 </TabsContent>
             </Tabs>
         </div>

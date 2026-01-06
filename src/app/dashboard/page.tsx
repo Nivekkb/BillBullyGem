@@ -10,6 +10,7 @@ import { DollarSign, HeartPulse, ShieldCheck, User, Loader2 } from "lucide-react
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import type { CreditItem, Subscription } from '@/lib/types';
+import { subMonths, format } from 'date-fns';
 
 // A type for the bill data could be added to types.ts as well
 type Bill = {
@@ -48,12 +49,24 @@ export default function DashboardPage() {
     const totalSavings = billSavings + subSavings;
     const activeDisputes = creditItems?.filter(item => item.status === 'Disputed').length || 0;
     const canceledSubs = subscriptions?.filter(s => s.status === 'Canceled').length || 0;
+    
+    let score = 650; // Base Score
+    const pointsPerDeletion = 15;
+    const deletedItems = creditItems?.filter(item => item.status === 'Deleted').length || 0;
+    score += deletedItems * pointsPerDeletion;
+    
+    const oneMonthAgo = subMonths(new Date(), 1);
+    const deletedLastMonth = creditItems?.filter(item => item.status === 'Deleted' && item.disputeDate && new Date(item.disputeDate) > oneMonthAgo).length || 0;
+    const scoreChange = deletedLastMonth * pointsPerDeletion;
+
 
     return {
       totalSavings,
       activeDisputes,
       canceledSubs,
       canceledSubsMonthlySavings: subSavings,
+      currentScore: score,
+      scoreChange: scoreChange
     };
   }, [bills, creditItems, subscriptions]);
 
@@ -82,11 +95,11 @@ export default function DashboardPage() {
         />
         <StatCard 
           title="Credit Score"
-          value="721"
+          value={String(stats.currentScore)}
           icon={<HeartPulse className="h-4 w-4 text-muted-foreground" />}
-          change="+43 pts"
+          change={stats.scoreChange > 0 ? `+${stats.scoreChange} pts` : ''}
           changeColor="text-green-500"
-          description="since last dispute"
+          description={stats.scoreChange > 0 ? "this month" : "since last dispute"}
         />
         <StatCard 
           title="Active Disputes"
@@ -111,7 +124,7 @@ export default function DashboardPage() {
             <CardDescription>Your bill negotiation savings over the last 6 months.</CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
-            <SavingsChart />
+            <SavingsChart bills={bills} subscriptions={subscriptions} />
           </CardContent>
         </Card>
         <Card className="col-span-4 lg:col-span-3">
@@ -120,7 +133,7 @@ export default function DashboardPage() {
             <CardDescription>Your score improvements over time.</CardDescription>
           </CardHeader>
           <CardContent className="pl-2">
-            <ScoreChart />
+            <ScoreChart creditItems={creditItems} />
           </CardContent>
         </Card>
       </div>
