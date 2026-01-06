@@ -32,3 +32,13 @@ export type Subscription = {
     cancellationDate?: string;
     createdAt: any; // Firestore ServerTimestamp
 };
+
+export type User = {
+    id: string;
+    email: string;
+    name: string;
+    country: string;
+    plaidAccessToken?: string;
+    creditReportConsent: boolean;
+    subscriptionTier: string;
+};

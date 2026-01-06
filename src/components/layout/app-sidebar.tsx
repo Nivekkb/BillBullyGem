@@ -75,9 +75,10 @@ export function AppSidebar() {
             <SidebarMenuItem>
                 <SidebarMenuButton
                 asChild
+                isActive={pathname === '/settings'}
                 tooltip={{ children: "Settings", side: "right", align: "center" }}
                 >
-                <Link href="#">
+                <Link href="/settings">
                     <Settings />
                     <span>Settings</span>
                 </Link>

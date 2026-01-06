@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderImages } from '@/lib/placeholder-images';
 import { useAuth, useUser } from '@/firebase';
 import { signOut } from 'firebase/auth';
+import Link from 'next/link';
 
 const pathToTitle: { [key: string]: string } = {
     '/dashboard': 'Dashboard',
@@ -23,6 +24,7 @@ const pathToTitle: { [key: string]: string } = {
     '/credit-repair': 'Credit Repair',
     '/subscription-cancellation': 'Subscription Manager',
     '/compliance': 'Compliance Tool',
+    '/settings': 'Settings',
 };
 
 
@@ -60,8 +62,12 @@ export function AppHeader() {
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="#">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings">Settings</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
