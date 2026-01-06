@@ -80,7 +80,7 @@ const pricingTiers = [
         ],
         buttonText: "Get Started Free",
         buttonVariant: "outline",
-        popular: false
+        buttonHref: "/dashboard"
     },
     {
         name: "Bill Bully Pro",
@@ -96,7 +96,8 @@ const pricingTiers = [
         ],
         buttonText: "Start Pro Trial",
         buttonVariant: "default",
-        popular: false
+        popular: false,
+        buttonHref: "/dashboard"
     },
     {
         name: "Credit Bully",
@@ -113,7 +114,8 @@ const pricingTiers = [
         ],
         buttonText: "Start Credit Repair",
         buttonVariant: "default",
-        popular: true
+        popular: true,
+        buttonHref: "/dashboard"
     },
     {
         name: "Ultimate Bundle",
@@ -129,7 +131,8 @@ const pricingTiers = [
         ],
         buttonText: "Get Ultimate",
         buttonVariant: "default",
-        popular: false
+        popular: false,
+        buttonHref: "/dashboard"
     }
 ]
 
@@ -193,7 +196,9 @@ export default function LandingPage() {
                 <Button size="lg" asChild>
                     <Link href="/dashboard">Start Saving Free</Link>
                 </Button>
-                <Button size="lg" variant="outline">See How It Works</Button>
+                <Button size="lg" variant="outline" asChild>
+                    <Link href="#how-it-works">See How It Works</Link>
+                </Button>
             </div>
           </div>
         </section>
@@ -352,8 +357,8 @@ export default function LandingPage() {
                                        </li>
                                    ))}
                                </ul>
-                               <Button size="lg" className="w-full mt-6" variant={tier.buttonVariant as any}>
-                                   {tier.buttonText}
+                                <Button asChild size="lg" className="w-full mt-6" variant={tier.buttonVariant as any}>
+                                   <Link href={tier.buttonHref}>{tier.buttonText}</Link>
                                </Button>
                             </CardContent>
                         </Card>
@@ -462,3 +467,5 @@ export default function LandingPage() {
     </div>
   );
 }
+
+    
