@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderImages } from "@/lib/placeholder-images";
 
 const menuItems = [
-  { href: "/", label: "Dashboard", icon: <LayoutDashboard /> },
+  { href: "/dashboard", label: "Dashboard", icon: <LayoutDashboard /> },
   { href: "/bill-negotiation", label: "Bill Negotiation", icon: <HandCoins /> },
   { href: "/credit-repair", label: "Credit Repair", icon: <ShieldCheck /> },
   { href: "/subscription-cancellation", label: "Subscription Manager", icon: <Scissors /> },

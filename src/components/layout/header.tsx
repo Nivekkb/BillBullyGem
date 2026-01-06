@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { placeholderImages } from '@/lib/placeholder-images';
 
 const pathToTitle: { [key: string]: string } = {
-    '/': 'Dashboard',
+    '/dashboard': 'Dashboard',
     '/bill-negotiation': 'Bill Negotiation',
     '/credit-repair': 'Credit Repair',
     '/subscription-cancellation': 'Subscription Manager',
