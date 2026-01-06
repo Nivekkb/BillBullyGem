@@ -21,3 +21,14 @@ export type DisputeLetter = {
     responseReceived?: boolean;
     createdAt: any; // Firestore ServerTimestamp
 }
+
+export type Subscription = {
+    id: string;
+    userId: string;
+    serviceName: string;
+    amount: number;
+    billingFrequency: string;
+    status: 'Active' | 'Canceled';
+    cancellationDate?: string;
+    createdAt: any; // Firestore ServerTimestamp
+};
