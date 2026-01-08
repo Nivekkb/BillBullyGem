@@ -151,7 +151,7 @@ export default function DashboardPage() {
           className="lg:col-span-3 lg:row-start-1 lg:h-[520px]"
         />
 
-        <Card className="mt-6 md:mt-0 lg:col-span-4 lg:row-start-2">
+        <Card className="mt-10 md:mt-0 lg:col-span-4 lg:row-start-2">
           <CardHeader>
             <CardTitle className="font-headline">Credit Score Journey</CardTitle>
             <CardDescription>Your score improvements over time.</CardDescription>
@@ -162,7 +162,7 @@ export default function DashboardPage() {
         </Card>
 
         <RecentActivity
-          className="mt-6 md:mt-0 lg:col-span-3 lg:row-start-2 lg:h-full lg:min-h-[300px]"
+          className="mt-10 md:mt-0 lg:col-span-3 lg:row-start-2 lg:h-full lg:min-h-[300px]"
           headerClassName="py-3"
           contentClassName="pt-0"
         />
