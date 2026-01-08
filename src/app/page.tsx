@@ -167,16 +167,13 @@ export default function LandingPage() {
               <Button size="lg" asChild>
                 <Link href="/login">Start Saving Free</Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="#how-it-works">See How It Works</Link>
-              </Button>
-              <span className="text-sm text-muted-foreground">Start Free — Keep Your Savings</span>
             </div>
-            <div className="mt-6 flex flex-col items-center gap-4 text-sm text-muted-foreground">
+            <div className="mt-4 md:mt-6 flex flex-col items-center gap-3 md:gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span>AI coaching</span>
               </div>
+              <span className="text-sm text-muted-foreground">Start Free — Keep Your Savings</span>
               <p className="text-muted-foreground/80">Early access rollout. Features expand as we validate quality.</p>
             </div>
           </div>
@@ -405,13 +402,18 @@ export default function LandingPage() {
               <Button size="lg" asChild>
                 <Link href="/login">Start Saving Now &rarr;</Link>
               </Button>
-              <Button size="lg" variant="outline">
+              <Button size="lg" variant="link">
                 Schedule a Demo
               </Button>
             </div>
             <div className="mt-12 text-center">
               <p className="text-sm text-muted-foreground">Calm. Honest. Grounded. Built for people who are done being taken advantage of.</p>
             </div>
+          </div>
+        </section>
+        <section className="py-6 md:py-8">
+          <div className="container mx-auto px-4 md:px-6 text-center">
+            <p className="text-sm text-muted-foreground">Start free. No credit card. You stay in control.</p>
           </div>
         </section>
       </main>

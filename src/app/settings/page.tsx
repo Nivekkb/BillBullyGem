@@ -129,11 +129,37 @@ export default function SettingsPage() {
         ): (
             <div className="grid gap-8 md:grid-cols-3">
                 <div className="md:col-span-2 space-y-8">
+                    <Card>
+                        <CardHeader>
+                        <CardTitle className="font-headline">Subscription Plan</CardTitle>
+                        <CardDescription>
+                            Manage your billing and subscription details.
+                        </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="p-4 rounded-md bg-secondary mb-6">
+                                <div className="flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm text-muted-foreground">Current Plan</p>
+                                        <p className="text-lg font-semibold">{currentTier?.name}</p>
+                                    </div>
+                                    <Badge variant="default">{currentTier?.price}{currentTier?.period}</Badge>
+                                </div>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-4">
+                                Upgrade anytime to unlock guided negotiations and advanced tools.
+                            </p>
+                            <Button asChild>
+                              <Link href="/upgrade">Update Subscription</Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+
                      <Card>
                         <CardHeader>
                         <CardTitle className="font-headline">Profile</CardTitle>
                         <CardDescription>
-                            This is how your information will be displayed in the app.
+                            This information is only used inside your account.
                         </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -171,29 +197,6 @@ export default function SettingsPage() {
                             </Button>
                             </form>
                         </Form>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                        <CardTitle className="font-headline">Subscription Plan</CardTitle>
-                        <CardDescription>
-                            Manage your billing and subscription details.
-                        </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="p-4 rounded-md bg-secondary mb-6">
-                                <div className="flex justify-between items-center">
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Current Plan</p>
-                                        <p className="text-lg font-semibold">{currentTier?.name}</p>
-                                    </div>
-                                    <Badge variant="default">{currentTier?.price}{currentTier?.period}</Badge>
-                                </div>
-                            </div>
-                            <Button asChild>
-                              <Link href="/upgrade">Update Subscription</Link>
-                            </Button>
                         </CardContent>
                     </Card>
                 </div>

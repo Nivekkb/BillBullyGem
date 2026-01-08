@@ -51,8 +51,13 @@ export default function UpgradePage() {
       <div className="text-center">
         <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tighter">Choose Your Plan</h1>
         <p className="mt-4 text-lg text-muted-foreground">
-          Pick the level of AI coaching that fits your goals. Upgrade anytime.
+          Pick the level of AI-guided coaching that fits your goals. Upgrade anytime.
         </p>
+        {isProd && !checkoutEnabled && (
+          <p className="mt-3 text-xs text-muted-foreground flex items-center justify-center gap-1">
+            <Lock className="h-3 w-3" /> Billing is not enabled yet. You can explore plans risk-free.
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
@@ -61,7 +66,7 @@ export default function UpgradePage() {
           return (
             <Card key={tier.name} className={cn("flex flex-col", tier.popular && "border-primary ring-2 ring-primary shadow-lg")}>
               {tier.popular && (
-                <Badge className="w-fit self-center -mt-3 bg-primary">Most Popular</Badge>
+                <Badge className="w-fit self-center -mt-4 bg-primary">Most Popular</Badge>
               )}
               <CardHeader className="pt-8">
                 <CardTitle className="font-headline text-2xl">{tier.name}</CardTitle>
@@ -90,16 +95,17 @@ export default function UpgradePage() {
                 >
                   {isProd && !user ? "Sign in to upgrade" : tier.buttonText}
                 </Button>
-                {isProd && !checkoutEnabled && (
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Lock className="h-3 w-3" /> Billing not enabled yet.
-                  </p>
+                {tier.name === "Bill Bully Pro" && (
+                  <p className="text-xs text-muted-foreground">Coaching only. No actions taken without you.</p>
                 )}
               </CardContent>
             </Card>
           );
         })}
       </div>
+      <p className="text-xs text-muted-foreground text-center">
+        BillBully provides educational and coaching tools. We do not provide legal or financial advice.
+      </p>
     </div>
   );
 }

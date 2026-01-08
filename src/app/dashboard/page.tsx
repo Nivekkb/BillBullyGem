@@ -101,71 +101,147 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-bold tracking-tight font-headline">Dashboard</h1>
         <p className="text-muted-foreground">Welcome back, here's a summary of your financial health.</p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard 
-          title="Total Monthly Savings"
-          value={`$${stats.totalSavings.toFixed(2)}`}
-          icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
-          description="from bills & subs"
-        />
-        <StatCard 
-          title="Credit Score"
-          value={String(stats.currentScore)}
-          icon={<HeartPulse className="h-4 w-4 text-muted-foreground" />}
-          change={stats.scoreChange > 0 ? `+${stats.scoreChange} pts` : ''}
-          changeColor="text-green-500"
-          description={stats.scoreChange > 0 ? "this month" : "since last dispute"}
-        />
-        <StatCard 
-          title="Active Disputes"
-          value={String(stats.activeDisputes)}
-          icon={<ShieldCheck className="h-4 w-4 text-muted-foreground" />}
-          description="awaiting response"
-        />
-        <StatCard 
-          title="Canceled Subs"
-          value={String(stats.canceledSubs)}
-          icon={<User className="h-4 w-4 text-muted-foreground" />}
-          change={`-$${stats.canceledSubsMonthlySavings.toFixed(2)}/mo`}
-          changeColor="text-green-500"
-          description="savings this month"
-        />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7 lg:grid-rows-2">
-        <Card className="lg:col-span-4 lg:row-start-1">
-          <CardHeader>
-            <CardTitle className="font-headline">Monthly Savings</CardTitle>
-            <CardDescription>Your bill negotiation savings over the last 6 months.</CardDescription>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <SavingsChart bills={bills} subscriptions={subscriptions} />
-          </CardContent>
-        </Card>
-
+      <div className="lg:hidden space-y-8">
         <AiChatPanel
           bills={bills}
           creditItems={creditItems}
           subscriptions={subscriptions}
           complianceChecks={complianceChecks}
-          className="lg:col-span-3 lg:row-start-1 lg:h-[520px]"
+          className="h-[520px]"
         />
 
-        <Card className="mt-10 md:mt-0 lg:col-span-4 lg:row-start-2">
-          <CardHeader>
-            <CardTitle className="font-headline">Credit Score Journey</CardTitle>
-            <CardDescription>Your score improvements over time.</CardDescription>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <ScoreChart creditItems={creditItems} />
-          </CardContent>
-        </Card>
+        <div className="border-t border-border/60 pt-6">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Your Financial Snapshot
+          </h2>
+        </div>
 
-        <RecentActivity
-          className="mt-10 md:mt-0 lg:col-span-3 lg:row-start-2 lg:h-full lg:min-h-[300px]"
-          headerClassName="py-3"
-          contentClassName="pt-0"
-        />
+        <div className="grid gap-4">
+          <StatCard
+            title="Total Monthly Savings"
+            value={`$${stats.totalSavings.toFixed(2)}`}
+            icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
+            description="from bills & subs"
+          />
+          <StatCard
+            title="Credit Score"
+            value={String(stats.currentScore)}
+            icon={<HeartPulse className="h-4 w-4 text-muted-foreground" />}
+            change={stats.scoreChange > 0 ? `+${stats.scoreChange} pts` : ''}
+            changeColor="text-green-500"
+            description={stats.scoreChange > 0 ? "this month" : "since last dispute"}
+          />
+          <StatCard
+            title="Active Disputes"
+            value={String(stats.activeDisputes)}
+            icon={<ShieldCheck className="h-4 w-4 text-muted-foreground" />}
+            description="awaiting response"
+          />
+          <StatCard
+            title="Canceled Subs"
+            value={String(stats.canceledSubs)}
+            icon={<User className="h-4 w-4 text-muted-foreground" />}
+            change={`-$${stats.canceledSubsMonthlySavings.toFixed(2)}/mo`}
+            changeColor="text-green-500"
+            description="savings this month"
+          />
+        </div>
+
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline">Credit Score Journey</CardTitle>
+              <CardDescription>Your score improvements over time.</CardDescription>
+            </CardHeader>
+            <CardContent className="pl-2">
+              <ScoreChart creditItems={creditItems} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline">Monthly Savings</CardTitle>
+              <CardDescription>Your bill negotiation savings over the last 6 months.</CardDescription>
+            </CardHeader>
+            <CardContent className="pl-2">
+              <SavingsChart bills={bills} subscriptions={subscriptions} />
+            </CardContent>
+          </Card>
+
+          <RecentActivity
+            headerClassName="py-3"
+            contentClassName="pt-0"
+          />
+        </div>
+      </div>
+
+      <div className="hidden lg:block space-y-8">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <StatCard 
+            title="Total Monthly Savings"
+            value={`$${stats.totalSavings.toFixed(2)}`}
+            icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
+            description="from bills & subs"
+          />
+          <StatCard 
+            title="Credit Score"
+            value={String(stats.currentScore)}
+            icon={<HeartPulse className="h-4 w-4 text-muted-foreground" />}
+            change={stats.scoreChange > 0 ? `+${stats.scoreChange} pts` : ''}
+            changeColor="text-green-500"
+            description={stats.scoreChange > 0 ? "this month" : "since last dispute"}
+          />
+          <StatCard 
+            title="Active Disputes"
+            value={String(stats.activeDisputes)}
+            icon={<ShieldCheck className="h-4 w-4 text-muted-foreground" />}
+            description="awaiting response"
+          />
+          <StatCard 
+            title="Canceled Subs"
+            value={String(stats.canceledSubs)}
+            icon={<User className="h-4 w-4 text-muted-foreground" />}
+            change={`-$${stats.canceledSubsMonthlySavings.toFixed(2)}/mo`}
+            changeColor="text-green-500"
+            description="savings this month"
+          />
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7 lg:grid-rows-2">
+          <Card className="lg:col-span-4 lg:row-start-1">
+            <CardHeader>
+              <CardTitle className="font-headline">Monthly Savings</CardTitle>
+              <CardDescription>Your bill negotiation savings over the last 6 months.</CardDescription>
+            </CardHeader>
+            <CardContent className="pl-2">
+              <SavingsChart bills={bills} subscriptions={subscriptions} />
+            </CardContent>
+          </Card>
+
+          <AiChatPanel
+            bills={bills}
+            creditItems={creditItems}
+            subscriptions={subscriptions}
+            complianceChecks={complianceChecks}
+            className="lg:col-span-3 lg:row-start-1 lg:h-[520px]"
+          />
+
+          <Card className="mt-10 md:mt-0 lg:col-span-4 lg:row-start-2">
+            <CardHeader>
+              <CardTitle className="font-headline">Credit Score Journey</CardTitle>
+              <CardDescription>Your score improvements over time.</CardDescription>
+            </CardHeader>
+            <CardContent className="pl-2">
+              <ScoreChart creditItems={creditItems} />
+            </CardContent>
+          </Card>
+
+          <RecentActivity
+            className="mt-10 md:mt-0 lg:col-span-3 lg:row-start-2 lg:h-full lg:min-h-[300px]"
+            headerClassName="py-3"
+            contentClassName="pt-0"
+          />
+        </div>
       </div>
     </div>
   );

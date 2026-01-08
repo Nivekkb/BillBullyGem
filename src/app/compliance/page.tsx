@@ -81,7 +81,7 @@ export default function CompliancePage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight font-headline">AI Compliance Tool</h1>
-        <p className="text-muted-foreground">Analyze credit repair features for compliance with Canadian consumer protection laws.</p>
+        <p className="text-muted-foreground">Analyze proposed credit-related features for compliance with Canadian consumer protection laws.</p>
         <p className="text-sm text-muted-foreground">
           This is guidance only. It does not file or send anything for you.
         </p>

@@ -203,7 +203,7 @@ export default function BillNegotiationPage() {
               <div className="md:col-span-3">
                 <Button type="submit" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Submit for Negotiation
+                  Generate Negotiation Script
                 </Button>
               </div>
             </form>

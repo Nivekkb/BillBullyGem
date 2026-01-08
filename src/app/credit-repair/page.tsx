@@ -46,7 +46,7 @@ export default function CreditRepairPage() {
     return (
         <div className="space-y-8">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight font-headline">Credit Repair</h1>
+                <h1 className="text-3xl font-bold tracking-tight font-headline">Credit Coaching</h1>
                 <p className="text-muted-foreground">Manage disputes, track your score, and take control of your credit.</p>
                 <p className="text-sm text-muted-foreground">
                     These tools help you organize your case and get AI coaching. Nothing is sent automatically.
@@ -83,7 +83,7 @@ export default function CreditRepairPage() {
                         <CardHeader>
                             <CardTitle className="font-headline">Dispute History</CardTitle>
                             <CardDescription>
-                                Track all the disputes we've sent on your behalf.
+                                Track all dispute drafts you've created.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>

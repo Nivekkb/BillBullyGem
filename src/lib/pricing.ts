@@ -35,8 +35,8 @@ export const pricingTiers: PricingTier[] = [
         period: "/month",
         description: "Maximize your savings",
         features: [
-            "Negotiate all bills quarterly",
-            "Cancel unlimited subscriptions",
+            "Guided bill negotiation coaching (quarterly)",
+            "Step-by-step subscription cancellation guidance",
             "Savings analytics dashboard",
             "Priority support",
             "Bill tracking alerts"
@@ -54,13 +54,13 @@ export const pricingTiers: PricingTier[] = [
         description: "Full credit repair suite",
         features: [
             "All Bill Bully Pro features",
-            "Dispute negative credit items",
-            "Automated debt validation",
-            "Goodwill letter campaigns",
+            "Guided dispute preparation for negative credit items",
+            "Debt validation letter assistance",
+            "Goodwill letter drafting tools",
             "Monthly credit score updates",
             "3-bureau monitoring (US)"
         ],
-        buttonText: "Start Credit Repair",
+        buttonText: "Start Credit Coaching",
         buttonVariant: "default",
         popular: true,
         buttonHref: "/dashboard",
@@ -70,15 +70,15 @@ export const pricingTiers: PricingTier[] = [
         name: "Ultimate Bundle",
         price: "$59.99",
         period: "/month",
-        description: "Best value for serious savers",
+        description: "Best for people actively negotiating bills and repairing credit",
         features: [
             "Everything in Credit Bully",
             "Save $10/month",
-            "Dedicated account manager",
+            "Priority coaching access",
             "Annual financial review",
             "VIP support queue"
         ],
-        buttonText: "Get Ultimate",
+        buttonText: "Start Ultimate Coaching",
         buttonVariant: "default",
         popular: false,
         buttonHref: "/dashboard",
