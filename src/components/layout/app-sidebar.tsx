@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
 import { Logo } from "@/components/icons/logo";
 import { Gavel, HandCoins, LayoutDashboard, Scissors, ShieldCheck, LogOut, Settings } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { placeholderImages } from "@/lib/placeholder-images";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth, useUser } from "@/firebase";
 import { signOut } from "firebase/auth";
 
@@ -22,7 +21,6 @@ const menuItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const userAvatar = placeholderImages.find(p => p.id === 'user-avatar-1');
   const { user } = useUser();
   const auth = useAuth();
 
@@ -63,7 +61,6 @@ export function AppSidebar() {
       <SidebarFooter className="p-2 border-t">
         <div className="flex items-center gap-3 p-2 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center">
             <Avatar className="h-9 w-9">
-              <AvatarImage src={user?.photoURL ?? userAvatar?.imageUrl} alt="User Avatar" data-ai-hint={userAvatar?.imageHint} />
               <AvatarFallback>{user?.email?.[0].toUpperCase() ?? 'B'}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col group-data-[collapsible=icon]:hidden">

@@ -12,8 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { placeholderImages } from '@/lib/placeholder-images';
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth, useUser } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
@@ -30,7 +29,6 @@ const pathToTitle: { [key: string]: string } = {
 
 export function AppHeader() {
   const pathname = usePathname();
-  const userAvatar = placeholderImages.find(p => p.id === 'user-avatar-1');
   const { user } = useUser();
   const auth = useAuth();
 
@@ -53,7 +51,6 @@ export function AppHeader() {
             <DropdownMenuTrigger asChild>
                 <Button variant="secondary" size="icon" className="rounded-full">
                     <Avatar className="h-8 w-8">
-                       <AvatarImage src={user?.photoURL ?? userAvatar?.imageUrl} alt="User Avatar" data-ai-hint={userAvatar?.imageHint} />
                        <AvatarFallback>{user?.email?.[0].toUpperCase() ?? 'B'}</AvatarFallback>
                     </Avatar>
                     <span className="sr-only">Toggle user menu</span>
