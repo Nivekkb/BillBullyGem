@@ -1,38 +1,16 @@
 'use client';
 
-import { useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { StatCard } from "../components/dashboard/stat-card";
+import { DashboardStatsGrid } from "../components/dashboard/dashboard-stats-grid";
 import { SavingsChart } from "../components/dashboard/savings-chart";
 import { ScoreChart } from "../components/dashboard/score-chart";
 import { RecentActivity } from "../components/dashboard/recent-activity";
 import { AiChatPanel } from "../components/dashboard/ai-chat-panel";
-import { DollarSign, HeartPulse, ShieldCheck, User, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
-import type { CreditItem, Subscription } from '@/lib/types';
-import { subMonths, format } from 'date-fns';
-
-// A type for the bill data could be added to types.ts as well
-type Bill = {
-  id: string;
-  companyName: string;
-  status: string;
-  createdAt: { toDate: () => Date };
-  savingsAmount?: number;
-};
-
-type ComplianceCheck = {
-  id: string;
-  featureDescription?: string;
-  relevantLaws?: string;
-  result?: {
-    isCompliant?: boolean;
-    complianceRationale?: string;
-    suggestedAdjustments?: string;
-  };
-  createdAt?: { toDate?: () => Date } | string;
-};
+import type { CreditItem, Subscription, Bill, ComplianceCheck } from '@/lib/types';
+import { useDashboardStats } from '@/hooks/use-dashboard-stats';
 
 
 export default function DashboardPage() {
@@ -49,41 +27,7 @@ export default function DashboardPage() {
   const { data: subscriptions, isLoading: loadingSubscriptions } = useCollection<Subscription>(subscriptionsQuery);
   const { data: complianceChecks, isLoading: loadingCompliance } = useCollection<ComplianceCheck>(complianceQuery);
 
-  const stats = useMemo(() => {
-    const billSavings = bills?.reduce((acc, bill) => acc + (bill.savingsAmount || 0), 0) || 0;
-    const subSavings = subscriptions?.filter(s => s.status === 'Canceled').reduce((acc, sub) => {
-        if (sub.billingFrequency === 'annually') {
-            return acc + sub.amount / 12;
-        }
-        if (sub.billingFrequency === 'quarterly') {
-            return acc + sub.amount / 3;
-        }
-        return acc + sub.amount;
-    }, 0) || 0;
-
-    const totalSavings = billSavings + subSavings;
-    const activeDisputes = creditItems?.filter(item => item.status === 'Disputed').length || 0;
-    const canceledSubs = subscriptions?.filter(s => s.status === 'Canceled').length || 0;
-    
-    let score = 650; // Base Score
-    const pointsPerDeletion = 15;
-    const deletedItems = creditItems?.filter(item => item.status === 'Deleted').length || 0;
-    score += deletedItems * pointsPerDeletion;
-    
-    const oneMonthAgo = subMonths(new Date(), 1);
-    const deletedLastMonth = creditItems?.filter(item => item.status === 'Deleted' && item.disputeDate && new Date(item.disputeDate) > oneMonthAgo).length || 0;
-    const scoreChange = deletedLastMonth * pointsPerDeletion;
-
-
-    return {
-      totalSavings,
-      activeDisputes,
-      canceledSubs,
-      canceledSubsMonthlySavings: subSavings,
-      currentScore: score,
-      scoreChange: scoreChange
-    };
-  }, [bills, creditItems, subscriptions]);
+  const stats = useDashboardStats(bills, creditItems, subscriptions);
 
   const isLoading = loadingBills || loadingCreditItems || loadingSubscriptions || loadingCompliance;
 
@@ -107,7 +51,7 @@ export default function DashboardPage() {
           creditItems={creditItems}
           subscriptions={subscriptions}
           complianceChecks={complianceChecks}
-          className="h-[520px]"
+          className="h-[520px] mb-6"
         />
 
         <div className="border-t border-border/60 pt-6">
@@ -116,36 +60,7 @@ export default function DashboardPage() {
           </h2>
         </div>
 
-        <div className="grid gap-4">
-          <StatCard
-            title="Total Monthly Savings"
-            value={`$${stats.totalSavings.toFixed(2)}`}
-            icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
-            description="from bills & subs"
-          />
-          <StatCard
-            title="Credit Score"
-            value={String(stats.currentScore)}
-            icon={<HeartPulse className="h-4 w-4 text-muted-foreground" />}
-            change={stats.scoreChange > 0 ? `+${stats.scoreChange} pts` : ''}
-            changeColor="text-green-500"
-            description={stats.scoreChange > 0 ? "this month" : "since last dispute"}
-          />
-          <StatCard
-            title="Active Disputes"
-            value={String(stats.activeDisputes)}
-            icon={<ShieldCheck className="h-4 w-4 text-muted-foreground" />}
-            description="awaiting response"
-          />
-          <StatCard
-            title="Canceled Subs"
-            value={String(stats.canceledSubs)}
-            icon={<User className="h-4 w-4 text-muted-foreground" />}
-            change={`-$${stats.canceledSubsMonthlySavings.toFixed(2)}/mo`}
-            changeColor="text-green-500"
-            description="savings this month"
-          />
-        </div>
+        <DashboardStatsGrid stats={stats} />
 
         <div className="space-y-6">
           <Card>
@@ -176,36 +91,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="hidden lg:block space-y-8">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard 
-            title="Total Monthly Savings"
-            value={`$${stats.totalSavings.toFixed(2)}`}
-            icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
-            description="from bills & subs"
-          />
-          <StatCard 
-            title="Credit Score"
-            value={String(stats.currentScore)}
-            icon={<HeartPulse className="h-4 w-4 text-muted-foreground" />}
-            change={stats.scoreChange > 0 ? `+${stats.scoreChange} pts` : ''}
-            changeColor="text-green-500"
-            description={stats.scoreChange > 0 ? "this month" : "since last dispute"}
-          />
-          <StatCard 
-            title="Active Disputes"
-            value={String(stats.activeDisputes)}
-            icon={<ShieldCheck className="h-4 w-4 text-muted-foreground" />}
-            description="awaiting response"
-          />
-          <StatCard 
-            title="Canceled Subs"
-            value={String(stats.canceledSubs)}
-            icon={<User className="h-4 w-4 text-muted-foreground" />}
-            change={`-$${stats.canceledSubsMonthlySavings.toFixed(2)}/mo`}
-            changeColor="text-green-500"
-            description="savings this month"
-          />
-        </div>
+        <DashboardStatsGrid stats={stats} />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7 lg:grid-rows-2">
           <Card className="lg:col-span-4 lg:row-start-1">

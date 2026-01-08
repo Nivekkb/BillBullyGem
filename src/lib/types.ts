@@ -42,3 +42,23 @@ export type User = {
     creditReportConsent: boolean;
     subscriptionTier: string;
 };
+
+export type Bill = {
+    id: string;
+    companyName: string;
+    status: string;
+    createdAt: any; // Firestore ServerTimestamp
+    savingsAmount?: number;
+};
+
+export type ComplianceCheck = {
+    id: string;
+    featureDescription?: string;
+    relevantLaws?: string;
+    result?: {
+        isCompliant?: boolean;
+        complianceRationale?: string;
+        suggestedAdjustments?: string;
+    };
+    createdAt?: any; // Firestore ServerTimestamp or string
+};
