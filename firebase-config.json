@@ -1,0 +1,14 @@
+ {
+  "version": "2",
+  "projectNumber": "287817352050",
+  "projectId": "billbully-39ff8",
+  "appId": "1:287817352050:web:14814c929167ecca61d3eb",
+  "realtimeDatabaseInstanceUri": "https://billbully-39ff8-default-rtdb.firebaseio.com",
+  "realtimeDatabaseUrl": "",
+  "storageBucket": "billbully-39ff8.firebasestorage.app",
+  "locationId": "",
+  "apiKey": "AIzaSyBZZo57_H8PE1epPPscedYJ4x1dS3FEphU",
+  "authDomain": "billbully-39ff8.firebaseapp.com",
+  "messagingSenderId": "287817352050",
+  "measurementId": "G-FZWJC56CB0"
+}
