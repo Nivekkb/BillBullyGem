@@ -10,6 +10,7 @@ export type PricingTier = {
   popular?: boolean;
   buttonHref: string;
   priceId?: string;
+  emotionalBenefit?: string;
 };
 
 export const pricingTiers: PricingTier[] = [
