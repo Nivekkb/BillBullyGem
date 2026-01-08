@@ -82,6 +82,9 @@ export default function CompliancePage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight font-headline">AI Compliance Tool</h1>
         <p className="text-muted-foreground">Analyze credit repair features for compliance with Canadian consumer protection laws.</p>
+        <p className="text-sm text-muted-foreground">
+          This is guidance only. It does not file or send anything for you.
+        </p>
       </div>
       <Button variant="link" onClick={() => router.back()} className="text-primary pl-0">
         <ArrowLeft className="mr-2 h-4 w-4" />
@@ -94,6 +97,9 @@ export default function CompliancePage() {
           <CardDescription>Describe a feature to check its compliance.</CardDescription>
         </CardHeader>
         <CardContent>
+          <p className="text-sm text-muted-foreground mb-6">
+            The output is advisory. You decide how to use it and what to send.
+          </p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField

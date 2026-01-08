@@ -180,6 +180,9 @@ export default function SubscriptionCancellationPage() {
         <p className="text-muted-foreground">
           Tired of paying for services you don't use? We'll help you cancel them.
         </p>
+        <p className="text-sm text-muted-foreground">
+          This tool helps you draft and organize requests. Nothing is sent automatically.
+        </p>
       </div>
       <Button variant="link" onClick={() => router.back()} className="text-primary pl-0">
         <ArrowLeft className="mr-2 h-4 w-4" />
@@ -194,6 +197,9 @@ export default function SubscriptionCancellationPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <p className="text-sm text-muted-foreground mb-6">
+            Submitting here only saves your info and drafts guidance. You can also just ask the AI coach in chat.
+          </p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid md:grid-cols-3 gap-6">

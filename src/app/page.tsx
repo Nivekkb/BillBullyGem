@@ -28,23 +28,23 @@ const howItWorksSteps = [
   {
     number: "01",
     icon: <Edit className="h-8 w-8" />,
-    title: "Enter Your Bills & Accounts",
+    title: "Enter Your Details (Optional)",
     description:
-      "Manually add your bills, subscriptions, and credit report items you want to address. Our guided forms make it easy.",
+      "Add bills, subscriptions, or credit items you want to address. Or skip this and just use the AI coach.",
   },
   {
     number: "02",
     icon: <Scan className="h-8 w-8" />,
-    title: "AI Analyzes & Prepares",
+    title: "AI Reviews & Prepares",
     description:
-      "Our AI analyzes the info you provide and prepares powerful, personalized letters and negotiation scripts.",
+      "The AI coach reviews what you share and prepares personalized guidance, scripts, and draft letters.",
   },
   {
     number: "03",
     icon: <MailCheck className="h-8 w-8" />,
-    title: "We Help You Take Action Safely",
+    title: "You Stay In Control",
     description:
-      "We provide the documents and guides. You send the letters and make the calls, armed with AI-powered arguments.",
+      "We provide documents and guides. You decide what to send and when.",
   },
   {
     number: "04",
@@ -175,7 +175,7 @@ export default function LandingPage() {
             <div className="mt-6 flex flex-col items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <span>AI powered</span>
+                <span>AI coaching</span>
               </div>
               <p className="text-muted-foreground/80">Early access rollout. Features expand as we validate quality.</p>
             </div>
@@ -196,24 +196,24 @@ export default function LandingPage() {
             <div className="relative max-w-2xl mx-auto space-y-4 animate-fade-in-up">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Monthly Savings</p>
+                    <p className="text-sm text-muted-foreground">Estimated Monthly Savings</p>
                     <p className="text-4xl font-bold text-primary">$237.48</p>
                   </div>
                   <Badge variant="default" className="bg-green-500/10 text-green-400 border-green-500/20">
-                    +18% this month
+                    Est. +18% this month
                   </Badge>
                 </div>
                 <div className="grid grid-cols-3 gap-4 text-left">
                   <div>
-                    <p className="text-xs text-muted-foreground">Bills Negotiated</p>
+                    <p className="text-xs text-muted-foreground">Bills Negotiated (est.)</p>
                     <p className="text-2xl font-bold">7</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Credit Score</p>
+                    <p className="text-xs text-muted-foreground">Credit Score (est.)</p>
                     <p className="text-2xl font-bold">+47 pts</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Subscriptions Cut</p>
+                    <p className="text-xs text-muted-foreground">Subscriptions Cut (est.)</p>
                     <p className="text-2xl font-bold">4</p>
                   </div>
                 </div>

@@ -113,7 +113,7 @@ export default function BillNegotiationPage() {
     
     toast({
         title: "Bill Submitted!",
-        description: `${values.companyName} bill has been submitted for negotiation.`,
+        description: `${values.companyName} bill has been submitted for coaching.`,
     });
 
     form.reset();
@@ -128,6 +128,9 @@ export default function BillNegotiationPage() {
         <p className="text-muted-foreground">
           Get AI coaching and scripts to help you negotiate a lower price on your monthly bills.
         </p>
+        <p className="text-sm text-muted-foreground">
+          Submitting here only saves your details. You can also just ask the AI coach in chat instead.
+        </p>
       </div>
       <Button variant="link" onClick={() => router.back()} className="text-primary pl-0">
         <ArrowLeft className="mr-2 h-4 w-4" />
@@ -136,12 +139,15 @@ export default function BillNegotiationPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-headline">Add a Bill for Negotiation</CardTitle>
+          <CardTitle className="font-headline">Add a Bill for Coaching</CardTitle>
           <CardDescription>
             Enter the details of a bill you'd like help negotiating.
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <p className="text-sm text-muted-foreground mb-6">
+            This does not contact your provider. It simply saves your info and lets the AI coach guide you.
+          </p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid md:grid-cols-3 gap-6">
               <FormField

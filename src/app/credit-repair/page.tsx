@@ -48,6 +48,9 @@ export default function CreditRepairPage() {
             <div>
                 <h1 className="text-3xl font-bold tracking-tight font-headline">Credit Repair</h1>
                 <p className="text-muted-foreground">Manage disputes, track your score, and take control of your credit.</p>
+                <p className="text-sm text-muted-foreground">
+                    These tools help you organize your case and get AI coaching. Nothing is sent automatically.
+                </p>
             </div>
             <Button variant="link" onClick={() => router.back()} className="text-primary pl-0">
                 <ArrowLeft className="mr-2 h-4 w-4" />
@@ -70,6 +73,9 @@ export default function CreditRepairPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                Submitting here only stores your info and drafts guidance. You can also just ask the AI coach in chat.
+                            </p>
                             <DisputeForm />
                         </CardContent>
                     </Card>
@@ -127,6 +133,9 @@ export default function CreditRepairPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
+                            <p className="text-sm text-muted-foreground mb-6">
+                                This analysis is advisory only and does not file anything for you.
+                            </p>
                             <AnalyzeResponseForm />
                         </CardContent>
                     </Card>

@@ -81,7 +81,7 @@ export function AiChatPanel({
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Ask me about your bills, credit, or subscriptions and I’ll summarize what I see.",
+      content: "Ask me about your bills, credit, or subscriptions and we can discuss how to move forward",
     },
   ]);
   const [input, setInput] = useState("");
@@ -158,6 +158,9 @@ export function AiChatPanel({
     <Card className={cn("h-full", className)}>
       <CardHeader>
         <CardTitle className="font-headline">AI Coach</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Coaching only. You choose what to send and when.
+        </p>
       </CardHeader>
       <CardContent className="flex h-full flex-col gap-4">
         <div className="flex-1 space-y-3 overflow-y-auto rounded-lg border border-border/40 bg-card/40 p-3">

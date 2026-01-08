@@ -57,7 +57,26 @@ export type DashboardAssistantOutput = z.infer<typeof AssistantOutputSchema>;
 export async function dashboardAssistant(
   input: DashboardAssistantInput
 ): Promise<DashboardAssistantOutput> {
-  return dashboardAssistantFlow(input);
+  const hasKey =
+    Boolean(process.env.GOOGLE_API_KEY) ||
+    Boolean(process.env.GOOGLE_GENAI_API_KEY);
+
+  if (!hasKey) {
+    return {
+      reply:
+        "AI coaching is temporarily unavailable because the API key is missing. Please try again later.",
+    };
+  }
+
+  try {
+    return await dashboardAssistantFlow(input);
+  } catch (error) {
+    console.error("dashboardAssistantFlow failed", error);
+    return {
+      reply:
+        "I hit a snag talking to the AI service. Please try again in a moment.",
+    };
+  }
 }
 
 const prompt = ai.definePrompt({
