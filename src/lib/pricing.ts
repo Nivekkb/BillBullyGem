@@ -9,6 +9,7 @@ export type PricingTier = {
   buttonVariant: "default" | "outline" | "secondary" | "ghost" | "link";
   popular?: boolean;
   buttonHref: string;
+  priceId?: string;
 };
 
 export const pricingTiers: PricingTier[] = [
@@ -42,7 +43,8 @@ export const pricingTiers: PricingTier[] = [
         buttonText: "Start Pro Trial",
         buttonVariant: "default",
         popular: false,
-        buttonHref: "/dashboard"
+        buttonHref: "/dashboard",
+        priceId: "price_1SmcXj5E116UcrqA55uBncnJ"
     },
     {
         name: "Credit Bully",
@@ -60,7 +62,8 @@ export const pricingTiers: PricingTier[] = [
         buttonText: "Start Credit Repair",
         buttonVariant: "default",
         popular: true,
-        buttonHref: "/dashboard"
+        buttonHref: "/dashboard",
+        priceId: "price_1Smcfr5E116UcrqApxRk4sYb"
     },
     {
         name: "Ultimate Bundle",
@@ -77,6 +80,7 @@ export const pricingTiers: PricingTier[] = [
         buttonText: "Get Ultimate",
         buttonVariant: "default",
         popular: false,
-        buttonHref: "/dashboard"
+        buttonHref: "/dashboard",
+        priceId: "price_1SmciJ5E116UcrqA95E7zJuD"
     }
 ];

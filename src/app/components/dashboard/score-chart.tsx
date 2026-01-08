@@ -81,7 +81,7 @@ export function ScoreChart({ creditItems }: ScoreChartProps) {
 
   return (
     <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-      <ResponsiveContainer width="100%" height={250}>
+      <ResponsiveContainer width="100%" height={220}>
         <LineChart accessibilityLayer data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
           <XAxis
             dataKey="month"

@@ -81,22 +81,24 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       auth,
       async (firebaseUser) => { // Auth state determined
         if (firebaseUser) {
-          // Check if user document exists, if not, create it
           const userDocRef = doc(firestore, 'users', firebaseUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
+          try {
+            const userDocSnap = await getDoc(userDocRef);
 
-          if (!userDocSnap.exists()) {
-              // This is a new user, create their profile document
+            if (!userDocSnap.exists()) {
               const newUserProfile = {
-                  id: firebaseUser.uid,
-                  email: firebaseUser.email,
-                  name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'New User',
-                  country: 'US', // Default value
-                  creditReportConsent: false, // Default value
-                  subscriptionTier: 'free',
-                  createdAt: serverTimestamp(),
+                id: firebaseUser.uid,
+                email: firebaseUser.email,
+                name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'New User',
+                country: 'US',
+                creditReportConsent: false,
+                subscriptionTier: 'free',
+                createdAt: serverTimestamp(),
               };
               setDocumentNonBlocking(userDocRef, newUserProfile, {});
+            }
+          } catch (error) {
+            console.warn('FirebaseProvider: failed to load user profile document.', error);
           }
         }
         setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });

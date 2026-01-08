@@ -6,6 +6,7 @@ import { StatCard } from "../components/dashboard/stat-card";
 import { SavingsChart } from "../components/dashboard/savings-chart";
 import { ScoreChart } from "../components/dashboard/score-chart";
 import { RecentActivity } from "../components/dashboard/recent-activity";
+import { AiChatPanel } from "../components/dashboard/ai-chat-panel";
 import { DollarSign, HeartPulse, ShieldCheck, User, Loader2 } from "lucide-react";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection } from 'firebase/firestore';
@@ -21,6 +22,18 @@ type Bill = {
   savingsAmount?: number;
 };
 
+type ComplianceCheck = {
+  id: string;
+  featureDescription?: string;
+  relevantLaws?: string;
+  result?: {
+    isCompliant?: boolean;
+    complianceRationale?: string;
+    suggestedAdjustments?: string;
+  };
+  createdAt?: { toDate?: () => Date } | string;
+};
+
 
 export default function DashboardPage() {
   const { user } = useUser();
@@ -29,10 +42,12 @@ export default function DashboardPage() {
   const billsQuery = useMemoFirebase(() => user && firestore ? collection(firestore, 'users', user.uid, 'bills') : null, [user, firestore]);
   const creditItemsQuery = useMemoFirebase(() => user && firestore ? collection(firestore, 'users', user.uid, 'credit_items') : null, [user, firestore]);
   const subscriptionsQuery = useMemoFirebase(() => user && firestore ? collection(firestore, 'users', user.uid, 'subscriptions') : null, [user, firestore]);
+  const complianceQuery = useMemoFirebase(() => user && firestore ? collection(firestore, 'users', user.uid, 'compliance_checks') : null, [user, firestore]);
 
   const { data: bills, isLoading: loadingBills } = useCollection<Bill>(billsQuery);
   const { data: creditItems, isLoading: loadingCreditItems } = useCollection<CreditItem>(creditItemsQuery);
   const { data: subscriptions, isLoading: loadingSubscriptions } = useCollection<Subscription>(subscriptionsQuery);
+  const { data: complianceChecks, isLoading: loadingCompliance } = useCollection<ComplianceCheck>(complianceQuery);
 
   const stats = useMemo(() => {
     const billSavings = bills?.reduce((acc, bill) => acc + (bill.savingsAmount || 0), 0) || 0;
@@ -70,7 +85,7 @@ export default function DashboardPage() {
     };
   }, [bills, creditItems, subscriptions]);
 
-  const isLoading = loadingBills || loadingCreditItems || loadingSubscriptions;
+  const isLoading = loadingBills || loadingCreditItems || loadingSubscriptions || loadingCompliance;
 
   if (isLoading) {
     return (
@@ -117,8 +132,8 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7 lg:grid-rows-2">
+        <Card className="lg:col-span-4 lg:row-start-1">
           <CardHeader>
             <CardTitle className="font-headline">Monthly Savings</CardTitle>
             <CardDescription>Your bill negotiation savings over the last 6 months.</CardDescription>
@@ -127,7 +142,16 @@ export default function DashboardPage() {
             <SavingsChart bills={bills} subscriptions={subscriptions} />
           </CardContent>
         </Card>
-        <Card className="col-span-4 lg:col-span-3">
+
+        <AiChatPanel
+          bills={bills}
+          creditItems={creditItems}
+          subscriptions={subscriptions}
+          complianceChecks={complianceChecks}
+          className="lg:col-span-3 lg:row-start-1 h-[520px]"
+        />
+
+        <Card className="lg:col-span-4 lg:row-start-2">
           <CardHeader>
             <CardTitle className="font-headline">Credit Score Journey</CardTitle>
             <CardDescription>Your score improvements over time.</CardDescription>
@@ -136,9 +160,13 @@ export default function DashboardPage() {
             <ScoreChart creditItems={creditItems} />
           </CardContent>
         </Card>
-      </div>
 
-      <RecentActivity />
+        <RecentActivity
+          className="lg:col-span-3 lg:row-start-2 h-full min-h-[300px]"
+          headerClassName="py-3"
+          contentClassName="pt-0"
+        />
+      </div>
     </div>
   );
 }

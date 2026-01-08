@@ -22,13 +22,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import Link from 'next/link';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import {
   Form,
@@ -49,11 +43,6 @@ const profileSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   email: z.string().email(),
 });
-
-const subscriptionSchema = z.object({
-  subscriptionTier: z.string({ required_error: 'Please select a subscription tier.' }),
-});
-
 
 export default function SettingsPage() {
   const { user } = useUser();
@@ -76,26 +65,19 @@ export default function SettingsPage() {
     },
   });
 
-  const subscriptionForm = useForm<z.infer<typeof subscriptionSchema>>({
-    resolver: zodResolver(subscriptionSchema),
-  });
-
   useEffect(() => {
     if (userData) {
       profileForm.reset({
         name: userData.name || '',
         email: userData.email || '',
       });
-      subscriptionForm.reset({
-        subscriptionTier: userData.subscriptionTier || 'free',
-      })
     } else if (user) {
         profileForm.reset({
             name: user.displayName || '',
             email: user.email || '',
         });
     }
-  }, [userData, user, profileForm, subscriptionForm]);
+  }, [userData, user, profileForm]);
 
 
   async function onProfileSubmit(values: z.infer<typeof profileSchema>) {
@@ -122,20 +104,6 @@ export default function SettingsPage() {
     });
   }
 
-   async function onSubscriptionSubmit(values: z.infer<typeof subscriptionSchema>) {
-    if (!userDocRef) return;
-    
-    updateDocumentNonBlocking(userDocRef, {
-        subscriptionTier: values.subscriptionTier,
-        updatedAt: serverTimestamp(),
-    });
-
-    toast({
-        title: 'Subscription Updated',
-        description: `Your plan has been changed to ${pricingTiers.find(t => t.name.toLowerCase().includes(values.subscriptionTier))?.name}.`,
-    });
-  }
-  
   const currentTier = pricingTiers.find(t => t.name.toLowerCase().includes(userData?.subscriptionTier?.replace('_', ' ') ?? 'free'));
 
 
@@ -223,38 +191,9 @@ export default function SettingsPage() {
                                     <Badge variant="default">{currentTier?.price}{currentTier?.period}</Badge>
                                 </div>
                             </div>
-                            <Form {...subscriptionForm}>
-                                <form onSubmit={subscriptionForm.handleSubmit(onSubscriptionSubmit)} className="space-y-4">
-                                <FormField
-                                    control={subscriptionForm.control}
-                                    name="subscriptionTier"
-                                    render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Change Plan</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a new plan" />
-                                            </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {pricingTiers.map(tier => (
-                                                    <SelectItem key={tier.name} value={tier.name.toLowerCase().replace(' ', '_').replace(/_.*/, '')}>
-                                                        {tier.name} - {tier.price}{tier.period}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                    )}
-                                />
-                                 <Button type="submit" disabled={subscriptionForm.formState.isSubmitting}>
-                                    {subscriptionForm.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                    Update Subscription
-                                </Button>
-                                </form>
-                            </Form>
+                            <Button asChild>
+                              <Link href="/upgrade">Update Subscription</Link>
+                            </Button>
                         </CardContent>
                     </Card>
                 </div>

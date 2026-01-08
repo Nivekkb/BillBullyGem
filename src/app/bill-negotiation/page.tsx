@@ -126,7 +126,7 @@ export default function BillNegotiationPage() {
           Bill Negotiation
         </h1>
         <p className="text-muted-foreground">
-          Let our AI agents fight for a lower price on your monthly bills.
+          Get AI coaching and scripts to help you negotiate a lower price on your monthly bills.
         </p>
       </div>
       <Button variant="link" onClick={() => router.back()} className="text-primary pl-0">
@@ -138,7 +138,7 @@ export default function BillNegotiationPage() {
         <CardHeader>
           <CardTitle className="font-headline">Add a Bill for Negotiation</CardTitle>
           <CardDescription>
-            Enter the details of a bill you'd like us to negotiate.
+            Enter the details of a bill you'd like help negotiating.
           </CardDescription>
         </CardHeader>
         <CardContent>

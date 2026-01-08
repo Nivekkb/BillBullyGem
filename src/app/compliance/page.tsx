@@ -13,6 +13,8 @@ import { Loader2, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useFirestore, useUser, useMemoFirebase, addDocumentNonBlocking } from "@/firebase";
+import { collection, serverTimestamp } from "firebase/firestore";
 
 const formSchema = z.object({
   featureDescription: z.string().min(20, { message: "Feature description must be at least 20 characters." }),
@@ -26,6 +28,16 @@ export default function CompliancePage() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { user } = useUser();
+  const firestore = useFirestore();
+
+  const complianceCollection = useMemoFirebase(
+    () =>
+      user && firestore
+        ? collection(firestore, "users", user.uid, "compliance_checks")
+        : null,
+    [user, firestore]
+  );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,6 +53,14 @@ export default function CompliancePage() {
     try {
       const result = await analyzeCompliance(values);
       setAnalysis(result);
+      if (complianceCollection) {
+        addDocumentNonBlocking(complianceCollection, {
+          featureDescription: values.featureDescription,
+          relevantLaws: values.relevantLaws,
+          result,
+          createdAt: serverTimestamp(),
+        });
+      }
       toast({
         title: "Compliance Analysis Complete",
         description: "The AI has reviewed the feature against the specified laws.",

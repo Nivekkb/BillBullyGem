@@ -25,6 +25,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type MergedActivity = {
   id: string;
@@ -35,7 +36,13 @@ type MergedActivity = {
   amount: string;
 };
 
-export function RecentActivity() {
+type RecentActivityProps = {
+  className?: string;
+  contentClassName?: string;
+  headerClassName?: string;
+};
+
+export function RecentActivity({ className, contentClassName, headerClassName }: RecentActivityProps) {
   const { user } = useUser();
   const firestore = useFirestore();
 
@@ -112,12 +119,12 @@ export function RecentActivity() {
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className={cn('flex flex-col', className)}>
+      <CardHeader className={cn('space-y-1', headerClassName)}>
         <CardTitle className="font-headline">Recent Activity</CardTitle>
         <CardDescription>A log of all recent actions taken on your behalf.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className={cn('flex-1 overflow-y-auto', contentClassName)}>
         {isLoading ? (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
