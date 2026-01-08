@@ -155,14 +155,14 @@ export function AiChatPanel({
   };
 
   return (
-    <Card className={cn("h-full", className)}>
+    <Card className={cn("flex flex-col", className)}>
       <CardHeader>
         <CardTitle className="font-headline">AI Coach</CardTitle>
         <p className="text-sm text-muted-foreground">
           Coaching only. You choose what to send and when.
         </p>
       </CardHeader>
-      <CardContent className="flex h-full flex-col gap-4">
+      <CardContent className="flex min-h-0 flex-1 flex-col gap-4">
         <div className="flex-1 space-y-3 overflow-y-auto rounded-lg border border-border/40 bg-card/40 p-3">
           {messages.map((message, index) => (
             <div
