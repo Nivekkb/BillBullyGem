@@ -1,10 +1,10 @@
-import { genkit, z } from "genkit";
-import { googleAI } from "@genkit-ai/google-genai";
+import {genkit, z} from "genkit";
+import {googleAI} from "@genkit-ai/google-genai";
 
 // Cloud Functions for Firebase supports Genkit natively. The onCallGenkit
 // function creates a callable function from a Genkit action.
 // It automatically implements streaming if your flow does.
-import { onCallGenkit } from "firebase-functions/https";
+import {onCallGenkit} from "firebase-functions/https";
 
 // Gemini Developer API models and Vertex Express Mode models depend on an API
 // key. API keys should be stored in Cloud Secret Manager so that access to
@@ -13,13 +13,13 @@ import { onCallGenkit } from "firebase-functions/https";
 // https://aistudio.google.com/app/apikey
 // If you are using Vertex Express Mode (vertexAI with apiKey) you can get an
 // API key from the Vertex AI Studio Express Mode setup.
-import { defineSecret } from "firebase-functions/params";
+import {defineSecret} from "firebase-functions/params";
 const apiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 
 // The Firebase telemetry plugin exports metrics, traces, and logs to Google
 // Cloud Observability. See
 // https://firebase.google.com/docs/genkit/observability/telemetry-collection.
-import { enableFirebaseTelemetry } from "@genkit-ai/firebase";
+import {enableFirebaseTelemetry} from "@genkit-ai/firebase";
 enableFirebaseTelemetry();
 
 const ai = genkit({
@@ -40,13 +40,13 @@ const menuSuggestionFlow = ai.defineFlow(
     outputSchema: z.string(),
     streamSchema: z.string(),
   },
-  async (subject, { sendChunk }) => {
+  async (subject, {sendChunk}) => {
     // Construct a request and send it to the model API.
     const prompt = [
       "Suggest an item for the menu of a",
       `${subject} themed restaurant`,
     ].join(" ");
-    const { response, stream } = ai.generateStream({
+    const {response, stream} = ai.generateStream({
       model: googleAI.model("gemini-2.5-flash"),
       prompt,
       config: {
