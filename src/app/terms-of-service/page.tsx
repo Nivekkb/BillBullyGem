@@ -12,10 +12,7 @@ export default function TermsOfServicePage() {
         <h1>Terms of Service</h1>
         <p className="text-muted-foreground">Last updated: {new Date().toLocaleDateString()}</p>
 
-        <p className="border-l-4 border-primary pl-4 text-lg">
-          <strong>Important:</strong> These Terms are a starting point and should be reviewed by a qualified legal professional to ensure compliance in your jurisdiction.
-        </p>
-
+        
         <h2>1. Agreement to Terms</h2>
         <p>
           By accessing or using BillBully (the "Service"), you agree to be bound by these Terms of Service ("Terms").
