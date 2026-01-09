@@ -39,6 +39,9 @@ export const deleteUserAccount = onCall(
   }
 );
 
+/**
+ * Builds a prompt template based on the request intent and user input.
+ */
 function buildPrompt({
   intent,
   userText = "",
@@ -123,6 +126,9 @@ export const forwardAiRequestToGenerate = onDocumentCreated(
   }
 );
 
+/**
+ * Extracts a model response string from the extension output payload.
+ */
 function extractReply(data: Record<string, unknown>) {
   const output = data.output as Record<string, unknown> | undefined;
   const result = data.result as Record<string, unknown> | undefined;
