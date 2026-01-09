@@ -20,6 +20,14 @@ env:
   # Grant access to secrets in Cloud Secret Manager.
   # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
   - variable: GOOGLE_API_KEY
-    secret: GOOGLE_API_KEY
+    secret: firestore-genai-chatbot-API_KEY
+    availability:
+      - RUNTIME
+  - variable: STRIPE_SECRET_KEY
+    secret: firestore-stripe-payments-STRIPE_API_KEY
+    availability:
+      - RUNTIME
+  - variable: STRIPE_WEBHOOK_SECRET
+    secret: firestore-stripe-payments-STRIPE_WEBHOOK_SECRET
     availability:
       - RUNTIME
