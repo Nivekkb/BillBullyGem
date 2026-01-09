@@ -1,11 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { addDoc, collection, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { dashboardAssistant } from "@/ai/flows/ai-dashboard-assistant";
+import { useFirestore, useUser } from "@/firebase";
 
 type Bill = {
   companyName?: string;
@@ -78,6 +79,8 @@ export function AiChatPanel({
   complianceChecks,
   className,
 }: AiChatPanelProps) {
+  const { user } = useUser();
+  const firestore = useFirestore();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
@@ -127,6 +130,15 @@ export function AiChatPanel({
     [bills, creditItems, subscriptions, complianceChecks]
   );
 
+  const detectIntent = (text: string) => {
+    const normalized = text.toLowerCase();
+    if (normalized.includes("bill")) return "bills";
+    if (normalized.includes("credit")) return "credit";
+    if (normalized.includes("subscription")) return "subscriptions";
+    if (normalized.includes("compliance")) return "compliance";
+    return "chat";
+  };
+
   const sendMessage = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || isSending) return;
@@ -136,11 +148,53 @@ export function AiChatPanel({
     setIsSending(true);
 
     try {
-      const result = await dashboardAssistant({ prompt: trimmed, context });
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: result.reply || "I didn’t get a response. Try again." },
-      ]);
+      if (!user) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Please sign in to use the AI coach.",
+          },
+        ]);
+        return;
+      }
+
+      const requestRef = await addDoc(collection(firestore, "aiRequests"), {
+        intent: detectIntent(trimmed),
+        userText: `${trimmed}\n\nContext:\n${JSON.stringify(context)}`,
+        userId: user.uid,
+        source: "dashboard",
+        status: "queued",
+        createdAt: serverTimestamp(),
+      });
+
+      const requestUnsub = onSnapshot(requestRef, (snap) => {
+        const data = snap.data() as
+          | { response?: string; error?: { message?: string } }
+          | undefined;
+        if (!data) return;
+        if (data.error?.message) {
+          requestUnsub();
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: data.error?.message,
+            },
+          ]);
+          return;
+        }
+        if (data.response) {
+          requestUnsub();
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: data.response,
+            },
+          ]);
+        }
+      });
     } catch (error) {
       setMessages((prev) => [
         ...prev,
