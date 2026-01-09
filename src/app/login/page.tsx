@@ -28,6 +28,7 @@ import {
   initiateEmailSignIn,
   initiateEmailSignUp,
   initiateGoogleSignIn,
+  initiateGoogleRedirectSignIn,
   useAuth,
   useUser,
 } from '@/firebase';
@@ -109,31 +110,33 @@ export default function LoginPage() {
   async function onLogin(values: z.infer<typeof loginSchema>) {
     setIsLoading(true);
     try {
-      initiateEmailSignIn(auth, values.email, values.password);
+      await initiateEmailSignIn(auth, values.email, values.password);
     } catch (error) {
       handleAuthError(error);
     } finally {
-      // The loading state will be managed by the useUser hook's loading status
+      setIsLoading(false);
     }
   }
 
   async function onSignup(values: z.infer<typeof signupSchema>) {
     setIsLoading(true);
     try {
-      initiateEmailSignUp(auth, values.email, values.password);
+      await initiateEmailSignUp(auth, values.email, values.password);
     } catch (error) {
       handleAuthError(error);
     } finally {
-      // The loading state will be managed by the useUser hook's loading status
+      setIsLoading(false);
     }
   }
 
-  const onGoogleSignIn = () => {
+  const onGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      initiateGoogleSignIn(auth);
+      await initiateGoogleSignIn(auth);
     } catch (error) {
       handleAuthError(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -178,6 +181,23 @@ export default function LoginPage() {
                   disabled={isLoading}
                 >
                   Continue with Google
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full mb-4"
+                  onClick={async () => {
+                    setIsLoading(true);
+                    try {
+                      await initiateGoogleRedirectSignIn(auth);
+                    } catch (error) {
+                      handleAuthError(error);
+                      setIsLoading(false);
+                    }
+                  }}
+                  disabled={isLoading}
+                >
+                  Use Google in this browser (redirect)
                 </Button>
                 <Form {...loginForm}>
                   <form
@@ -250,6 +270,23 @@ export default function LoginPage() {
                   disabled={isLoading}
                 >
                   Continue with Google
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full mb-4"
+                  onClick={async () => {
+                    setIsLoading(true);
+                    try {
+                      await initiateGoogleRedirectSignIn(auth);
+                    } catch (error) {
+                      handleAuthError(error);
+                      setIsLoading(false);
+                    }
+                  }}
+                  disabled={isLoading}
+                >
+                  Use Google in this browser (redirect)
                 </Button>
                 <Form {...signupForm}>
                   <form
