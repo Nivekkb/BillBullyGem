@@ -1,25 +1,28 @@
 "use client";
 
+import { useState } from "react";
+import { addDoc, collection, onSnapshot } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { pricingTiers } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
-import { useUser } from "@/firebase";
+import { useFirestore, useUser } from "@/firebase";
 import { useToast } from "@/hooks/use-toast";
 
 export default function UpgradePage() {
   const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
   const { toast } = useToast();
-  const isProd = process.env.NODE_ENV === "production";
-  const checkoutBaseUrl = process.env.NEXT_PUBLIC_STRIPE_CHECKOUT_URL || "";
 
   const paidTiers = pricingTiers.filter((tier) => tier.priceId);
 
-  const handleCheckout = (priceId?: string) => {
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const handleCheckout = async (priceId?: string) => {
     if (!priceId) return;
-    if (isProd && !user) {
+    if (!user) {
       toast({
         title: "Sign in required",
         description: "Please sign in before upgrading your plan.",
@@ -27,14 +30,52 @@ export default function UpgradePage() {
       });
       return;
     }
-    if (isProd) {
-      window.location.href = `${checkoutBaseUrl}?priceId=${priceId}`;
-      return;
+    if (!firestore || isCheckingOut) return;
+
+    setIsCheckingOut(true);
+
+    try {
+      const checkoutSessionsRef = collection(
+        firestore,
+        "customers",
+        user.uid,
+        "checkout_sessions"
+      );
+      const origin = window.location.origin;
+      const docRef = await addDoc(checkoutSessionsRef, {
+        price: priceId,
+        success_url: `${origin}/upgrade?success=true`,
+        cancel_url: `${origin}/upgrade?canceled=true`,
+      });
+
+      const unsubscribe = onSnapshot(docRef, (snap) => {
+        const data = snap.data() as { url?: string; error?: { message?: string } } | undefined;
+        if (!data) return;
+        if (data.error?.message) {
+          unsubscribe();
+          setIsCheckingOut(false);
+          toast({
+            title: "Checkout failed",
+            description: data.error.message,
+            variant: "destructive",
+          });
+          return;
+        }
+        if (data.url) {
+          unsubscribe();
+          setIsCheckingOut(false);
+          window.location.assign(data.url);
+        }
+      });
+    } catch (error) {
+      setIsCheckingOut(false);
+      console.error("Failed to start checkout session", error);
+      toast({
+        title: "Checkout failed",
+        description: "Unable to start checkout. Please try again.",
+        variant: "destructive",
+      });
     }
-    toast({
-      title: "Dev mode checkout",
-      description: `Would start checkout for ${priceId}.`,
-    });
   };
 
   return (
@@ -48,7 +89,7 @@ export default function UpgradePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
         {paidTiers.map((tier) => {
-          const disabled = isUserLoading || (isProd && !user);
+          const disabled = isUserLoading || !user || isCheckingOut;
           return (
             <Card key={tier.name} className={cn("flex flex-col", tier.popular && "border-primary ring-2 ring-primary shadow-lg")}>
               {tier.popular && (
@@ -79,7 +120,7 @@ export default function UpgradePage() {
                   disabled={disabled}
                   onClick={() => handleCheckout(tier.priceId)}
                 >
-                  {isProd && !user ? "Sign in to upgrade" : tier.buttonText}
+                  {!user ? "Sign in to upgrade" : tier.buttonText}
                 </Button>
                 {tier.name === "Bill Bully Pro" && (
                   <p className="text-xs text-muted-foreground">Coaching only. No actions taken without you.</p>
