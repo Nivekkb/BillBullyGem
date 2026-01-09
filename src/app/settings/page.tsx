@@ -10,6 +10,8 @@ import {
   useDoc,
   useMemoFirebase,
   setDocumentNonBlocking,
+  useAuth,
+  useFirebaseApp,
 } from '@/firebase';
 import { doc, serverTimestamp } from 'firebase/firestore';
 
@@ -34,10 +36,12 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { pricingTiers } from '@/lib/pricing';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { User as AppUser } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { useRouter } from 'next/navigation';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { signOut } from 'firebase/auth';
 
 const profileSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -46,9 +50,12 @@ const profileSchema = z.object({
 
 export default function SettingsPage() {
   const { user } = useUser();
+  const auth = useAuth();
+  const firebaseApp = useFirebaseApp();
   const firestore = useFirestore();
   const { toast } = useToast();
   const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const userDocRef = useMemoFirebase(
     () => (user && firestore ? doc(firestore, 'users', user.uid) : null),
@@ -105,6 +112,32 @@ export default function SettingsPage() {
   }
 
   const currentTier = pricingTiers.find(t => t.name.toLowerCase().includes(userData?.subscriptionTier?.replace('_', ' ') ?? 'free'));
+
+  const handleDeleteAccount = async () => {
+    if (!user || isDeleting) return;
+    const confirmed = window.confirm(
+      "This will permanently delete your account and all associated data. This cannot be undone."
+    );
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+
+    try {
+      const functions = getFunctions(firebaseApp);
+      const deleteAccount = httpsCallable(functions, 'deleteUserAccount');
+      await deleteAccount();
+      await signOut(auth);
+      router.push('/');
+    } catch (error) {
+      console.error("Failed to delete account", error);
+      toast({
+        title: 'Delete failed',
+        description: 'Could not delete your account. Please try again.',
+        variant: 'destructive',
+      });
+      setIsDeleting(false);
+    }
+  };
 
 
   return (
@@ -207,7 +240,14 @@ export default function SettingsPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                          <Button variant="outline" className="w-full">Export My Data</Button>
-                         <Button variant="destructive" className="w-full">Delete My Account</Button>
+                         <Button
+                           variant="destructive"
+                           className="w-full"
+                           onClick={handleDeleteAccount}
+                           disabled={isDeleting}
+                         >
+                           {isDeleting ? 'Deleting...' : 'Delete My Account'}
+                         </Button>
                     </CardContent>
                 </Card>
 
