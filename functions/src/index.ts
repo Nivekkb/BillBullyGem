@@ -5,7 +5,7 @@ import {getFirestore} from "firebase-admin/firestore";
 
 initializeApp();
 
-export const deleteUserAccount = onCall(async (request) => {
+export const deleteUserAccount = onCall({ region: "us-east4" }, async (request) => {
   if (!request.auth?.uid) {
     throw new HttpsError(
       "unauthenticated",
