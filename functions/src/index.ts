@@ -41,6 +41,7 @@ export const deleteUserAccount = onCall(
 
 /**
  * Builds a prompt template based on the request intent and user input.
+ * @return {string} The prompt text to send to the generator.
  */
 function buildPrompt({
   intent,
@@ -128,6 +129,8 @@ export const forwardAiRequestToGenerate = onDocumentCreated(
 
 /**
  * Extracts a model response string from the extension output payload.
+ * @param {Record<string, unknown>} data The extension output payload.
+ * @return {string|undefined} The extracted response text, if any.
  */
 function extractReply(data: Record<string, unknown>) {
   const output = data.output as Record<string, unknown> | undefined;
