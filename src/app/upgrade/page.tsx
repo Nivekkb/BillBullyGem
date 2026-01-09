@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { pricingTiers } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
-import { Check, Lock } from "lucide-react";
+import { Check } from "lucide-react";
 import { useUser } from "@/firebase";
 import { useToast } from "@/hooks/use-toast";
 
@@ -14,7 +14,6 @@ export default function UpgradePage() {
   const { toast } = useToast();
   const isProd = process.env.NODE_ENV === "production";
   const checkoutBaseUrl = process.env.NEXT_PUBLIC_STRIPE_CHECKOUT_URL || "";
-  const checkoutEnabled = !isProd || Boolean(checkoutBaseUrl);
 
   const paidTiers = pricingTiers.filter((tier) => tier.priceId);
 
@@ -24,14 +23,6 @@ export default function UpgradePage() {
       toast({
         title: "Sign in required",
         description: "Please sign in before upgrading your plan.",
-        variant: "destructive",
-      });
-      return;
-    }
-    if (!checkoutEnabled) {
-      toast({
-        title: "Checkout not configured",
-        description: "Billing is not enabled yet in production.",
         variant: "destructive",
       });
       return;
@@ -53,16 +44,11 @@ export default function UpgradePage() {
         <p className="mt-4 text-lg text-muted-foreground">
           Pick the level of AI-guided coaching that fits your goals. Upgrade anytime.
         </p>
-        {isProd && !checkoutEnabled && (
-          <p className="mt-3 text-xs text-muted-foreground flex items-center justify-center gap-1">
-            <Lock className="h-3 w-3" /> Billing is not enabled yet. You can explore plans risk-free.
-          </p>
-        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
         {paidTiers.map((tier) => {
-          const disabled = isUserLoading || (isProd && !user) || !checkoutEnabled;
+          const disabled = isUserLoading || (isProd && !user);
           return (
             <Card key={tier.name} className={cn("flex flex-col", tier.popular && "border-primary ring-2 ring-primary shadow-lg")}>
               {tier.popular && (
