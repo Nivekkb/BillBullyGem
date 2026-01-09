@@ -27,6 +27,7 @@ import { useToast } from '@/hooks/use-toast';
 import {
   initiateEmailSignIn,
   initiateEmailSignUp,
+  initiateGoogleSignIn,
   useAuth,
   useUser,
 } from '@/firebase';
@@ -127,6 +128,15 @@ export default function LoginPage() {
     }
   }
 
+  const onGoogleSignIn = () => {
+    setIsLoading(true);
+    try {
+      initiateGoogleSignIn(auth);
+    } catch (error) {
+      handleAuthError(error);
+    }
+  };
+
   if (isUserLoading || user) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -160,6 +170,15 @@ export default function LoginPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full mb-4"
+                  onClick={onGoogleSignIn}
+                  disabled={isLoading}
+                >
+                  Continue with Google
+                </Button>
                 <Form {...loginForm}>
                   <form
                     onSubmit={loginForm.handleSubmit(onLogin)}
@@ -223,6 +242,15 @@ export default function LoginPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full mb-4"
+                  onClick={onGoogleSignIn}
+                  disabled={isLoading}
+                >
+                  Continue with Google
+                </Button>
                 <Form {...signupForm}>
                   <form
                     onSubmit={signupForm.handleSubmit(onSignup)}
