@@ -11,6 +11,8 @@ export type PricingTier = {
   buttonHref: string;
   priceId?: string;
   emotionalBenefit?: string;
+  paymentLink?: string;
+  qrImage?: string;
 };
 
 export const pricingTiers: PricingTier[] = [
@@ -44,7 +46,9 @@ export const pricingTiers: PricingTier[] = [
         buttonText: "Start Pro Trial",
         buttonVariant: "default",
         popular: false,
-        buttonHref: "/dashboard",
+        buttonHref: "https://buy.stripe.com/cNiaEQ0KMgNJeFT4DpgMw01",
+        paymentLink: "https://buy.stripe.com/cNiaEQ0KMgNJeFT4DpgMw01",
+        qrImage: "/pro.png",
         priceId: "price_1SmcXj5E116UcrqA55uBncnJ"
     },
     {
@@ -63,7 +67,9 @@ export const pricingTiers: PricingTier[] = [
         buttonText: "Start Credit Coaching",
         buttonVariant: "default",
         popular: true,
-        buttonHref: "/dashboard",
+        buttonHref: "https://buy.stripe.com/7sY7sEfFG2WTapD8TFgMw02",
+        paymentLink: "https://buy.stripe.com/7sY7sEfFG2WTapD8TFgMw02",
+        qrImage: "/creditbully.png",
         priceId: "price_1Smcfr5E116UcrqApxRk4sYb"
     },
     {
@@ -81,7 +87,9 @@ export const pricingTiers: PricingTier[] = [
         buttonText: "Start Ultimate Coaching",
         buttonVariant: "default",
         popular: false,
-        buttonHref: "/dashboard",
+        buttonHref: "https://buy.stripe.com/9B65kweBCgNJ2Xb8TFgMw00",
+        paymentLink: "https://buy.stripe.com/9B65kweBCgNJ2Xb8TFgMw00",
+        qrImage: "/ultimate.png",
         priceId: "price_1SmciJ5E116UcrqA95E7zJuD"
     }
 ];

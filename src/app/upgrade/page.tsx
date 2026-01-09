@@ -1,27 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { pricingTiers } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
-import { useFirestore, useUser } from "@/firebase";
+import { useUser } from "@/firebase";
 import { useToast } from "@/hooks/use-toast";
 
 export default function UpgradePage() {
   const { user, isUserLoading } = useUser();
-  const firestore = useFirestore();
   const { toast } = useToast();
 
   const paidTiers = pricingTiers.filter((tier) => tier.priceId);
 
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const openPaymentLink = (url?: string) => {
+    if (!url) return;
+    window.location.href = url;
+  };
 
-  const handleCheckout = async (priceId?: string) => {
-    if (!priceId) return;
+  const handleCheckout = (priceId?: string, paymentLink?: string) => {
+    if (!priceId || !paymentLink) return;
     if (!user) {
       toast({
         title: "Sign in required",
@@ -30,52 +30,7 @@ export default function UpgradePage() {
       });
       return;
     }
-    if (!firestore || isCheckingOut) return;
-
-    setIsCheckingOut(true);
-
-    try {
-      const checkoutSessionsRef = collection(
-        firestore,
-        "customers",
-        user.uid,
-        "checkout_sessions"
-      );
-      const origin = window.location.origin;
-      const docRef = await addDoc(checkoutSessionsRef, {
-        price: priceId,
-        success_url: `${origin}/upgrade?success=true`,
-        cancel_url: `${origin}/upgrade?canceled=true`,
-      });
-
-      const unsubscribe = onSnapshot(docRef, (snap) => {
-        const data = snap.data() as { url?: string; error?: { message?: string } } | undefined;
-        if (!data) return;
-        if (data.error?.message) {
-          unsubscribe();
-          setIsCheckingOut(false);
-          toast({
-            title: "Checkout failed",
-            description: data.error.message,
-            variant: "destructive",
-          });
-          return;
-        }
-        if (data.url) {
-          unsubscribe();
-          setIsCheckingOut(false);
-          window.location.assign(data.url);
-        }
-      });
-    } catch (error) {
-      setIsCheckingOut(false);
-      console.error("Failed to start checkout session", error);
-      toast({
-        title: "Checkout failed",
-        description: "Unable to start checkout. Please try again.",
-        variant: "destructive",
-      });
-    }
+    openPaymentLink(paymentLink);
   };
 
   return (
@@ -89,9 +44,25 @@ export default function UpgradePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
         {paidTiers.map((tier) => {
-          const disabled = isUserLoading || !user || isCheckingOut;
+          const disabled = isUserLoading || !user;
+          const paymentLink = tier.paymentLink ?? tier.buttonHref;
           return (
-            <Card key={tier.name} className={cn("flex flex-col", tier.popular && "border-primary ring-2 ring-primary shadow-lg")}>
+            <Card
+              key={tier.name}
+              className={cn(
+                "flex flex-col cursor-pointer transition-shadow hover:shadow-md",
+                tier.popular && "border-primary ring-2 ring-primary shadow-lg"
+              )}
+              role="link"
+              tabIndex={0}
+              onClick={() => handleCheckout(tier.priceId, paymentLink)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  handleCheckout(tier.priceId, paymentLink);
+                }
+              }}
+            >
               {tier.popular && (
                 <Badge className="w-fit self-center -mt-4 bg-primary">Most Popular</Badge>
               )}
@@ -118,12 +89,24 @@ export default function UpgradePage() {
                   variant={tier.buttonVariant as any}
                   data-price-id={tier.priceId}
                   disabled={disabled}
-                  onClick={() => handleCheckout(tier.priceId)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleCheckout(tier.priceId, paymentLink);
+                  }}
                 >
                   {!user ? "Sign in to upgrade" : tier.buttonText}
                 </Button>
                 {tier.name === "Bill Bully Pro" && (
                   <p className="text-xs text-muted-foreground">Coaching only. No actions taken without you.</p>
+                )}
+                {tier.qrImage && (
+                  <div className="pt-2 flex flex-col items-center">
+                    <img
+                      src={tier.qrImage}
+                      alt={`${tier.name} payment QR`}
+                      className="h-24 w-24 rounded-md border border-border/60 bg-white p-1"
+                    />
+                  </div>
                 )}
               </CardContent>
             </Card>

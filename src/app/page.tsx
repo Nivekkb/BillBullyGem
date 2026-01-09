@@ -373,6 +373,15 @@ export default function LandingPage() {
                     <Button asChild size="lg" className="w-full mt-6" variant={tier.buttonVariant as any}>
                       <Link href={tier.buttonHref}>{tier.buttonText}</Link>
                     </Button>
+                    {tier.qrImage && (
+                      <div className="pt-2 flex flex-col items-center">
+                        <img
+                          src={tier.qrImage}
+                          alt={`${tier.name} payment QR`}
+                          className="h-24 w-24 rounded-md border border-border/60 bg-white p-1"
+                        />
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
