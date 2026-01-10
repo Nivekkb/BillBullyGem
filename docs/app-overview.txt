@@ -1,0 +1,72 @@
+BillBully App Overview
+
+Summary
+BillBully is a coaching-led personal finance assistant that helps users negotiate bills, cancel subscriptions, and manage credit disputes. The product is designed to provide guidance and drafting tools while keeping the user in control of what gets sent and when.
+
+Core Principles
+- Coaching first: AI provides guidance, scripts, and drafts, not automated actions.
+- User control: nothing is sent on the user’s behalf.
+- Transparency: clear pricing, honest limitations, and early-access messaging.
+- Safety and compliance: language avoids regulated “acting on behalf” claims.
+
+Primary Features
+
+1) Dashboard (home)
+- AI Coach chat: asks questions, uses user data context, and provides guidance.
+- Quick prompts: bills, credit, subscriptions, compliance, general chat.
+- Snapshot cards: total monthly savings, credit score estimate, active disputes, canceled subscriptions.
+- Trends and history: savings chart, credit score journey, recent activity.
+
+2) Authentication
+- Email/password login and sign-up.
+- Google sign-in (popup) with a redirect fallback for popup blockers.
+- On login, a user profile document is created in Firestore (if missing).
+
+3) Profile & Settings
+- Profile edit (name, email read-only).
+- Subscription plan display and link to upgrade.
+- Account actions: export data (placeholder) and delete account.
+- Delete account removes auth user and related Firestore data (including subcollections).
+
+4) Subscription Manager
+- Add subscriptions with billing info.
+- Generate a cancellation draft via AI (no auto-send).
+- Track active and canceled subscriptions.
+
+5) Bill Negotiation
+- Add a bill and generate a negotiation script.
+- Track negotiation status and savings estimates.
+
+6) Credit Coaching
+- Dispute workflow: generate and save dispute letters.
+- Dispute history tracking (drafts only).
+- Score tracker and bureau response analysis.
+- Coaching and educational tone throughout.
+
+7) Compliance Tool
+- AI compliance analysis for proposed credit/billing features (Canada focus).
+- Guidance-only output with clear disclaimers.
+
+8) Pricing & Plans
+- Free tier and paid tiers with clear feature lists.
+- Upgrade page with plan cards and legal disclaimers.
+- Payment flow integrates with Stripe (extension / Firestore-driven checkout sessions).
+
+9) Legal & Trust Content
+- Privacy policy and terms of service.
+- Transparent language and disclaimers about coaching vs. legal/financial advice.
+
+Data & Security Notes
+- Firestore rules restrict access to user-owned data.
+- App Check can be enabled with reCAPTCHA v3 for runtime protection.
+- Stripe secrets and API keys are stored in Secret Manager and injected into App Hosting.
+
+Glossary of Key Collections (Firestore)
+- users/{uid}: user profile and settings
+- users/{uid}/bills, subscriptions, credit_items, compliance_checks: user data
+- customers/{uid}/checkout_sessions: Stripe checkout sessions (extension)
+- customers/{uid}/subscriptions: Stripe subscription data (extension)
+- aiRequests/{requestId}: AI chat requests and responses
+- generate/{docId}: extension output (server-only, locked down)
+
+End of document.
